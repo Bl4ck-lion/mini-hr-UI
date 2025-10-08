@@ -1,0 +1,3211 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mini HR System - Organisasi Mahasiswa</title>
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary: #3498db;
+            --secondary: #2c3e50;
+            --success: #2ecc71;
+            --warning: #f39c12;
+            --danger: #e74c3c;
+            --light: #f8f9fa;
+            --dark: #343a40;
+        }
+        
+        body {
+            font-family: 'Poppins', sans-serif;
+            background-color: #f5f7fa;
+            color: #333;
+        }
+        
+        .sidebar {
+            background-color: var(--secondary);
+            color: white;
+            min-height: 100vh;
+            padding: 0;
+            transition: all 0.3s;
+        }
+        
+        .sidebar .nav-link {
+            color: rgba(255, 255, 255, 0.8);
+            padding: 12px 20px;
+            margin: 2px 0;
+            border-radius: 0;
+        }
+        
+        .sidebar .nav-link:hover, .sidebar .nav-link.active {
+            background-color: rgba(255, 255, 255, 0.1);
+            color: white;
+        }
+        
+        .sidebar .nav-link i {
+            margin-right: 10px;
+            width: 20px;
+            text-align: center;
+        }
+        
+        .main-content {
+            padding: 20px;
+        }
+        
+        .card {
+            border-radius: 10px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            border: none;
+            margin-bottom: 20px;
+            transition: transform 0.3s;
+        }
+        
+        .card:hover {
+            transform: translateY(-5px);
+        }
+        
+        .card-header {
+            background-color: white;
+            border-bottom: 1px solid #eee;
+            font-weight: 600;
+            padding: 15px 20px;
+            border-radius: 10px 10px 0 0 !important;
+        }
+        
+        .stat-card {
+            text-align: center;
+            padding: 20px;
+        }
+        
+        .stat-card i {
+            font-size: 2.5rem;
+            margin-bottom: 15px;
+        }
+        
+        .stat-card .number {
+            font-size: 2rem;
+            font-weight: 700;
+        }
+        
+        .stat-card .label {
+            font-size: 0.9rem;
+            color: #6c757d;
+        }
+        
+        .bg-primary { background-color: var(--primary) !important; }
+        .bg-secondary { background-color: var(--secondary) !important; }
+        .bg-success { background-color: var(--success) !important; }
+        .bg-warning { background-color: var(--warning) !important; }
+        .bg-danger { background-color: var(--danger) !important; }
+        
+        .btn-primary { background-color: var(--primary); border-color: var(--primary); }
+        .btn-secondary { background-color: var(--secondary); border-color: var(--secondary); }
+        .btn-success { background-color: var(--success); border-color: var(--success); }
+        .btn-warning { background-color: var(--warning); border-color: var(--warning); }
+        .btn-danger { background-color: var(--danger); border-color: var(--danger); }
+        
+        .table th {
+            background-color: #f8f9fa;
+            font-weight: 600;
+        }
+        
+        .badge {
+            font-weight: 500;
+            padding: 6px 10px;
+        }
+        
+        .navbar-brand {
+            font-weight: 700;
+        }
+        
+        .progress {
+            height: 8px;
+        }
+        
+        .attendance-status {
+            display: inline-block;
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+            margin-right: 5px;
+        }
+        
+        .attendance-present { background-color: var(--success); }
+        .attendance-late { background-color: var(--warning); }
+        .attendance-absent { background-color: var(--danger); }
+        
+        .section {
+            display: none;
+        }
+        
+        .section.active {
+            display: block;
+        }
+        
+        .user-avatar {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background-color: var(--primary);
+            color: white;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 600;
+        }
+        
+        .task-priority-high { border-left: 4px solid var(--danger); }
+        .task-priority-medium { border-left: 4px solid var(--warning); }
+        .task-priority-low { border-left: 4px solid var(--success); }
+        
+        .whatsapp-integration {
+            background: linear-gradient(135deg, #25D366 0%, #128C7E 100%);
+            color: white;
+            padding: 15px;
+            border-radius: 10px;
+            margin-bottom: 20px;
+        }
+        
+        .automation-card {
+            border-left: 4px solid var(--primary);
+        }
+        
+        .settings-card {
+            border-left: 4px solid var(--success);
+        }
+        
+        .danger-card {
+            border-left: 4px solid var(--danger);
+        }
+        
+        .api-status {
+            display: inline-block;
+            width: 10px;
+            height: 10px;
+            border-radius: 50%;
+            margin-right: 5px;
+        }
+        
+        .status-connected {
+            background-color: var(--success);
+        }
+        
+        .status-disconnected {
+            background-color: var(--danger);
+        }
+        
+        @media (max-width: 768px) {
+            .sidebar {
+                min-height: auto;
+                width: 100%;
+            }
+            
+            .main-content {
+                padding: 10px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container-fluid">
+        <div class="row">
+            <!-- Sidebar -->
+            <div class="col-md-3 col-lg-2 sidebar d-md-block">
+                <div class="position-sticky pt-3">
+                    <div class="text-center p-3">
+                        <h4 class="fw-bold">Mini HR System</h4>
+                        <p class="text-muted small">Organisasi Mahasiswa</p>
+                    </div>
+                    <ul class="nav flex-column">
+                        <li class="nav-item">
+                            <a class="nav-link active" href="#" data-section="dashboard">
+                                <i class="fas fa-tachometer-alt"></i> Dashboard
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="#" data-section="members">
+                                <i class="fas fa-users"></i> Anggota
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="#" data-section="schedule">
+                                <i class="fas fa-calendar-alt"></i> Jadwal
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="#" data-section="tasks">
+                                <i class="fas fa-tasks"></i> Tugas
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="#" data-section="attendance">
+                                <i class="fas fa-clipboard-check"></i> Kehadiran
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="#" data-section="rewards">
+                                <i class="fas fa-award"></i> Reward & SP
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="#" data-section="automation">
+                                <i class="fas fa-robot"></i> Automasi WhatsApp
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="#" data-section="reports">
+                                <i class="fas fa-chart-bar"></i> Laporan
+                            </a>
+                        </li>
+                        <li class="nav-item mt-4">
+                            <a class="nav-link" href="#" data-section="settings">
+                                <i class="fas fa-cog"></i> Pengaturan
+                            </a>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+
+            <!-- Main Content -->
+            <div class="col-md-9 col-lg-10 ms-sm-auto px-0">
+                <!-- Navbar -->
+                <nav class="navbar navbar-expand-lg navbar-light bg-white shadow-sm">
+                    <div class="container-fluid">
+                        <button class="navbar-toggler d-md-none" type="button" data-bs-toggle="collapse" data-bs-target="#sidebarMenu">
+                            <span class="navbar-toggler-icon"></span>
+                        </button>
+                        
+                        <div class="d-flex align-items-center">
+                            <div class="dropdown">
+                                <a href="#" class="d-flex align-items-center text-decoration-none dropdown-toggle" id="dropdownUser" data-bs-toggle="dropdown">
+                                    <div class="user-avatar me-2">AD</div>
+                                    <span class="d-none d-sm-inline">Admin</span>
+                                </a>
+                                <ul class="dropdown-menu">
+                                    <li><a class="dropdown-item" href="#">Profil</a></li>
+                                    <li><a class="dropdown-item" href="#" data-section="settings">Pengaturan</a></li>
+                                    <li><hr class="dropdown-divider"></li>
+                                    <li><a class="dropdown-item" href="#">Keluar</a></li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                </nav>
+
+                <!-- Dashboard Section -->
+                <div class="section active main-content" id="dashboard">
+                    <div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
+                        <h1 class="h2">Dashboard</h1>
+                        <div class="btn-toolbar mb-2 mb-md-0">
+                            <button class="btn btn-sm btn-outline-secondary">
+                                <i class="fas fa-download"></i> Ekspor
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- Stats Cards -->
+                    <div class="row">
+                        <div class="col-xl-3 col-md-6 mb-4">
+                            <div class="card border-left-primary shadow h-100 py-2">
+                                <div class="card-body">
+                                    <div class="row no-gutters align-items-center">
+                                        <div class="col mr-2">
+                                            <div class="text-xs font-weight-bold text-primary text-uppercase mb-1">
+                                                Total Anggota</div>
+                                            <div class="h5 mb-0 font-weight-bold text-gray-800" id="total-members">0</div>
+                                        </div>
+                                        <div class="col-auto">
+                                            <i class="fas fa-users fa-2x text-gray-300"></i>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="col-xl-3 col-md-6 mb-4">
+                            <div class="card border-left-success shadow h-100 py-2">
+                                <div class="card-body">
+                                    <div class="row no-gutters align-items-center">
+                                        <div class="col mr-2">
+                                            <div class="text-xs font-weight-bold text-success text-uppercase mb-1">
+                                                Kehadiran (Bulan Ini)</div>
+                                            <div class="h5 mb-0 font-weight-bold text-gray-800" id="attendance-rate">0%</div>
+                                        </div>
+                                        <div class="col-auto">
+                                            <i class="fas fa-clipboard-check fa-2x text-gray-300"></i>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="col-xl-3 col-md-6 mb-4">
+                            <div class="card border-left-warning shadow h-100 py-2">
+                                <div class="card-body">
+                                    <div class="row no-gutters align-items-center">
+                                        <div class="col mr-2">
+                                            <div class="text-xs font-weight-bold text-warning text-uppercase mb-1">
+                                                Tugas Tertunda</div>
+                                            <div class="h5 mb-0 font-weight-bold text-gray-800" id="pending-tasks">0</div>
+                                        </div>
+                                        <div class="col-auto">
+                                            <i class="fas fa-tasks fa-2x text-gray-300"></i>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="col-xl-3 col-md-6 mb-4">
+                            <div class="card border-left-danger shadow h-100 py-2">
+                                <div class="card-body">
+                                    <div class="row no-gutters align-items-center">
+                                        <div class="col mr-2">
+                                            <div class="text-xs font-weight-bold text-danger text-uppercase mb-1">
+                                                SP Aktif</div>
+                                            <div class="h5 mb-0 font-weight-bold text-gray-800" id="active-sp">0</div>
+                                        </div>
+                                        <div class="col-auto">
+                                            <i class="fas fa-exclamation-triangle fa-2x text-gray-300"></i>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="row">
+                        <!-- Jadwal Mendatang -->
+                        <div class="col-lg-6 mb-4">
+                            <div class="card">
+                                <div class="card-header d-flex justify-content-between align-items-center">
+                                    <span>Jadwal Mendatang</span>
+                                    <button class="btn btn-sm btn-primary" data-bs-toggle="modal" data-bs-target="#addScheduleModal">
+                                        <i class="fas fa-plus"></i> Tambah
+                                    </button>
+                                </div>
+                                <div class="card-body">
+                                    <div class="list-group list-group-flush" id="upcoming-schedule">
+                                        <!-- Schedule items will be added here dynamically -->
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Tugas Terbaru -->
+                        <div class="col-lg-6 mb-4">
+                            <div class="card">
+                                <div class="card-header d-flex justify-content-between align-items-center">
+                                    <span>Tugas Terbaru</span>
+                                    <button class="btn btn-sm btn-primary" data-bs-toggle="modal" data-bs-target="#addTaskModal">
+                                        <i class="fas fa-plus"></i> Tambah
+                                    </button>
+                                </div>
+                                <div class="card-body">
+                                    <div class="list-group list-group-flush" id="recent-tasks">
+                                        <!-- Task items will be added here dynamically -->
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Grafik Kehadiran -->
+                    <div class="row">
+                        <div class="col-lg-12">
+                            <div class="card">
+                                <div class="card-header">
+                                    <span>Statistik Kehadiran 6 Bulan Terakhir</span>
+                                </div>
+                                <div class="card-body">
+                                    <canvas id="attendanceChart" height="100"></canvas>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Members Section -->
+                <div class="section main-content" id="members">
+                    <div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
+                        <h1 class="h2">Manajemen Anggota</h1>
+                        <div class="btn-toolbar mb-2 mb-md-0">
+                            <button class="btn btn-sm btn-primary" data-bs-toggle="modal" data-bs-target="#addMemberModal">
+                                <i class="fas fa-plus"></i> Tambah Anggota
+                            </button>
+                        </div>
+                    </div>
+
+                    <div class="card">
+                        <div class="card-body">
+                            <div class="table-responsive">
+                                <table class="table table-hover" id="members-table">
+                                    <thead>
+                                        <tr>
+                                            <th>#</th>
+                                            <th>Nama</th>
+                                            <th>NIM</th>
+                                            <th>Posisi</th>
+                                            <th>Kontak</th>
+                                            <th>Status</th>
+                                            <th>Poin</th>
+                                            <th>Aksi</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <!-- Members data will be populated here -->
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Schedule Section -->
+                <div class="section main-content" id="schedule">
+                    <div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
+                        <h1 class="h2">Jadwal Kegiatan</h1>
+                        <div class="btn-toolbar mb-2 mb-md-0">
+                            <button class="btn btn-sm btn-primary" data-bs-toggle="modal" data-bs-target="#addScheduleModal">
+                                <i class="fas fa-plus"></i> Tambah Jadwal
+                            </button>
+                        </div>
+                    </div>
+
+                    <div class="card">
+                        <div class="card-body">
+                            <div id="calendar">
+                                <!-- Calendar content will be populated here -->
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Tasks Section -->
+                <div class="section main-content" id="tasks">
+                    <div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
+                        <h1 class="h2">Manajemen Tugas</h1>
+                        <div class="btn-toolbar mb-2 mb-md-0">
+                            <button class="btn btn-sm btn-primary" data-bs-toggle="modal" data-bs-target="#addTaskModal">
+                                <i class="fas fa-plus"></i> Tambah Tugas
+                            </button>
+                        </div>
+                    </div>
+
+                    <div class="card">
+                        <div class="card-body">
+                            <div class="table-responsive">
+                                <table class="table table-hover" id="tasks-table">
+                                    <thead>
+                                        <tr>
+                                            <th>#</th>
+                                            <th>Nama Tugas</th>
+                                            <th>Deskripsi</th>
+                                            <th>Penugasan</th>
+                                            <th>Deadline</th>
+                                            <th>Status</th>
+                                            <th>Prioritas</th>
+                                            <th>Aksi</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <!-- Tasks data will be populated here -->
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Attendance Section -->
+                <div class="section main-content" id="attendance">
+                    <div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
+                        <h1 class="h2">Kehadiran</h1>
+                        <div class="btn-toolbar mb-2 mb-md-0">
+                            <button class="btn btn-sm btn-primary" data-bs-toggle="modal" data-bs-target="#addAttendanceModal">
+                                <i class="fas fa-plus"></i> Catat Kehadiran
+                            </button>
+                        </div>
+                    </div>
+
+                    <div class="card">
+                        <div class="card-body">
+                            <div class="table-responsive">
+                                <table class="table table-hover" id="attendance-table">
+                                    <thead>
+                                        <tr>
+                                            <th>#</th>
+                                            <th>Tanggal</th>
+                                            <th>Kegiatan</th>
+                                            <th>Anggota</th>
+                                            <th>Status</th>
+                                            <th>Keterangan</th>
+                                            <th>Aksi</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <!-- Attendance data will be populated here -->
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Rewards & SP Section -->
+                <div class="section main-content" id="rewards">
+                    <div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
+                        <h1 class="h2">Reward & Surat Peringatan</h1>
+                        <div class="btn-toolbar mb-2 mb-md-0">
+                            <div class="btn-group me-2">
+                                <button class="btn btn-sm btn-success" data-bs-toggle="modal" data-bs-target="#addRewardModal">
+                                    <i class="fas fa-plus"></i> Beri Reward
+                                </button>
+                                <button class="btn btn-sm btn-warning" data-bs-toggle="modal" data-bs-target="#addSPModal">
+                                    <i class="fas fa-plus"></i> Beri SP
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="row">
+                        <div class="col-lg-6 mb-4">
+                            <div class="card">
+                                <div class="card-header bg-success text-white">
+                                    <span>Reward</span>
+                                </div>
+                                <div class="card-body">
+                                    <div class="list-group list-group-flush" id="rewards-list">
+                                        <!-- Rewards will be added here dynamically -->
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="col-lg-6 mb-4">
+                            <div class="card">
+                                <div class="card-header bg-warning text-white">
+                                    <span>Surat Peringatan (SP)</span>
+                                </div>
+                                <div class="card-body">
+                                    <div class="list-group list-group-flush" id="sp-list">
+                                        <!-- SPs will be added here dynamically -->
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Automation Section -->
+                <div class="section main-content" id="automation">
+                    <div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
+                        <h1 class="h2">Automasi WhatsApp</h1>
+                        <div class="btn-toolbar mb-2 mb-md-0">
+                            <button class="btn btn-sm btn-success" onclick="testFonnteConnection()">
+                                <i class="fas fa-bolt"></i> Test Koneksi
+                            </button>
+                        </div>
+                    </div>
+
+                    <div class="whatsapp-integration">
+                        <div class="d-flex align-items-center">
+                            <i class="fab fa-whatsapp fa-2x me-3"></i>
+                            <div>
+                                <h4 class="mb-1">Integrasi Fonnte WhatsApp</h4>
+                                <p class="mb-0">Kirim notifikasi otomatis ke anggota organisasi</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="row">
+                        <div class="col-lg-6 mb-4">
+                            <div class="card automation-card">
+                                <div class="card-header d-flex justify-content-between align-items-center">
+                                    <span><i class="fas fa-bell me-2"></i> Reminder Jadwal</span>
+                                    <div class="form-check form-switch">
+                                        <input class="form-check-input" type="checkbox" id="reminder-toggle" checked>
+                                        <label class="form-check-label" for="reminder-toggle">Aktif</label>
+                                    </div>
+                                </div>
+                                <div class="card-body">
+                                    <p>Kirim pengingat jadwal kegiatan via WhatsApp 24 jam sebelum acara.</p>
+                                    <div class="mb-3">
+                                        <label class="form-label">Pesan Default:</label>
+                                        <textarea class="form-control" id="reminder-message" rows="3">Halo {nama}, jangan lupa acara {acara} pada {tanggal} pukul {waktu} di {lokasi}. Harap hadir tepat waktu.</textarea>
+                                    </div>
+                                    <button class="btn btn-primary" onclick="sendScheduleReminders()">
+                                        <i class="fab fa-whatsapp me-1"></i> Kirim Reminder Sekarang
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="col-lg-6 mb-4">
+                            <div class="card automation-card">
+                                <div class="card-header d-flex justify-content-between align-items-center">
+                                    <span><i class="fas fa-tasks me-2"></i> Reminder Tugas</span>
+                                    <div class="form-check form-switch">
+                                        <input class="form-check-input" type="checkbox" id="task-reminder-toggle" checked>
+                                        <label class="form-check-label" for="task-reminder-toggle">Aktif</label>
+                                    </div>
+                                </div>
+                                <div class="card-body">
+                                    <p>Kirim pengingat tugas yang mendekati deadline via WhatsApp.</p>
+                                    <div class="mb-3">
+                                        <label class="form-label">Pesan Default:</label>
+                                        <textarea class="form-control" id="task-reminder-message" rows="3">Halo {nama}, tugas "{tugas}" dengan deadline {deadline} akan segera jatuh tempo. Jangan lupa untuk menyelesaikannya.</textarea>
+                                    </div>
+                                    <button class="btn btn-primary" onclick="sendTaskReminders()">
+                                        <i class="fab fa-whatsapp me-1"></i> Kirim Reminder Sekarang
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="row">
+                        <div class="col-lg-6 mb-4">
+                            <div class="card automation-card">
+                                <div class="card-header d-flex justify-content-between align-items-center">
+                                    <span><i class="fas fa-exclamation-triangle me-2"></i> Notifikasi SP</span>
+                                    <div class="form-check form-switch">
+                                        <input class="form-check-input" type="checkbox" id="sp-notification-toggle" checked>
+                                        <label class="form-check-label" for="sp-notification-toggle">Aktif</label>
+                                    </div>
+                                </div>
+                                <div class="card-body">
+                                    <p>Kirim notifikasi Surat Peringatan (SP) via WhatsApp secara otomatis.</p>
+                                    <div class="mb-3">
+                                        <label class="form-label">Pesan SP1:</label>
+                                        <textarea class="form-control" id="sp1-message" rows="2">Halo {nama}, Anda menerima SP1 karena {alasan}. Harap memperbaiki kedisiplinan.</textarea>
+                                    </div>
+                                    <div class="mb-3">
+                                        <label class="form-label">Pesan SP2:</label>
+                                        <textarea class="form-control" id="sp2-message" rows="2">Halo {nama}, Anda menerima SP2 karena {alasan}. Ini adalah peringatan kedua.</textarea>
+                                    </div>
+                                    <div class="mb-3">
+                                        <label class="form-label">Pesan SP3:</label>
+                                        <textarea class="form-control" id="sp3-message" rows="2">Halo {nama}, Anda menerima SP3 karena {alasan}. Terima kasih atas kontribusinya.</textarea>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="col-lg-6 mb-4">
+                            <div class="card automation-card">
+                                <div class="card-header d-flex justify-content-between align-items-center">
+                                    <span><i class="fas fa-award me-2"></i> Notifikasi Reward</span>
+                                    <div class="form-check form-switch">
+                                        <input class="form-check-input" type="checkbox" id="reward-notification-toggle" checked>
+                                        <label class="form-check-label" for="reward-notification-toggle">Aktif</label>
+                                    </div>
+                                </div>
+                                <div class="card-body">
+                                    <p>Kirim notifikasi reward dan pencapaian via WhatsApp.</p>
+                                    <div class="mb-3">
+                                        <label class="form-label">Pesan Reward:</label>
+                                        <textarea class="form-control" id="reward-message" rows="3">Selamat {nama}! Anda mendapatkan {jenis_reward} karena {alasan}. Terima kasih atas kontribusi Anda.</textarea>
+                                    </div>
+                                    <button class="btn btn-success" onclick="sendRewardNotifications()">
+                                        <i class="fab fa-whatsapp me-1"></i> Kirim Notifikasi Reward
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="card">
+                        <div class="card-header">
+                            <span><i class="fas fa-history me-2"></i> Riwayat Pengiriman</span>
+                        </div>
+                        <div class="card-body">
+                            <div class="table-responsive">
+                                <table class="table table-hover" id="message-history">
+                                    <thead>
+                                        <tr>
+                                            <th>Tanggal</th>
+                                            <th>Penerima</th>
+                                            <th>Jenis Pesan</th>
+                                            <th>Status</th>
+                                            <th>Aksi</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <!-- Message history will be populated here -->
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Reports Section -->
+                <div class="section main-content" id="reports">
+                    <div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
+                        <h1 class="h2">Laporan</h1>
+                        <div class="btn-toolbar mb-2 mb-md-0">
+                            <button class="btn btn-sm btn-outline-secondary">
+                                <i class="fas fa-print"></i> Cetak
+                            </button>
+                        </div>
+                    </div>
+
+                    <div class="row">
+                        <div class="col-lg-6 mb-4">
+                            <div class="card">
+                                <div class="card-header">
+                                    <span>Laporan Kehadiran</span>
+                                </div>
+                                <div class="card-body">
+                                    <canvas id="attendanceReportChart" height="200"></canvas>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="col-lg-6 mb-4">
+                            <div class="card">
+                                <div class="card-header">
+                                    <span>Laporan Tugas</span>
+                                </div>
+                                <div class="card-body">
+                                    <canvas id="tasksReportChart" height="200"></canvas>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="card">
+                        <div class="card-header">
+                            <span>Rekap Anggota</span>
+                        </div>
+                        <div class="card-body">
+                            <div class="table-responsive">
+                                <table class="table table-hover" id="reports-table">
+                                    <thead>
+                                        <tr>
+                                            <th>Nama</th>
+                                            <th>Kehadiran</th>
+                                            <th>Tugas Selesai</th>
+                                            <th>Tugas Tertunda</th>
+                                            <th>Reward</th>
+                                            <th>SP</th>
+                                            <th>Poin</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <!-- Reports data will be populated here -->
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Settings Section -->
+                <div class="section main-content" id="settings">
+                    <div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
+                        <h1 class="h2">Pengaturan Sistem</h1>
+                        <div class="btn-toolbar mb-2 mb-md-0">
+                            <button class="btn btn-sm btn-success" onclick="saveAllSettings()">
+                                <i class="fas fa-save"></i> Simpan Semua Pengaturan
+                            </button>
+                        </div>
+                    </div>
+
+                    <div class="alert alert-info">
+                        <i class="fas fa-info-circle me-2"></i>
+                        Kelola semua pengaturan sistem di sini. Pastikan untuk menyimpan perubahan setelah melakukan modifikasi.
+                    </div>
+
+                    <div class="row">
+                        <!-- Pengaturan Umum -->
+                        <div class="col-lg-6 mb-4">
+                            <div class="card settings-card">
+                                <div class="card-header">
+                                    <i class="fas fa-sliders-h me-2"></i> Pengaturan Umum
+                                </div>
+                                <div class="card-body">
+                                    <div class="mb-3">
+                                        <label for="organization-name" class="form-label">Nama Organisasi</label>
+                                        <input type="text" class="form-control" id="organization-name" placeholder="Masukkan nama organisasi">
+                                    </div>
+                                    <div class="mb-3">
+                                        <label for="organization-description" class="form-label">Deskripsi Organisasi</label>
+                                        <textarea class="form-control" id="organization-description" rows="3" placeholder="Deskripsi singkat tentang organisasi"></textarea>
+                                    </div>
+                                    <div class="mb-3">
+                                        <label for="academic-year" class="form-label">Tahun Akademik</label>
+                                        <input type="text" class="form-control" id="academic-year" placeholder="Contoh: 2025/2026">
+                                    </div>
+                                    <div class="mb-3">
+                                        <label for="timezone" class="form-label">Zona Waktu</label>
+                                        <select class="form-select" id="timezone">
+                                            <option value="WIB">WIB (Waktu Indonesia Barat)</option>
+                                            <option value="WITA">WITA (Waktu Indonesia Tengah)</option>
+                                            <option value="WIT">WIT (Waktu Indonesia Timur)</option>
+                                        </select>
+                                    </div>
+                                    <div class="mb-3">
+                                        <label for="language" class="form-label">Bahasa</label>
+                                        <select class="form-select" id="language">
+                                            <option value="id">Bahasa Indonesia</option>
+                                            <option value="en">English</option>
+                                        </select>
+                                    </div>
+                                    <button class="btn btn-primary" onclick="saveGeneralSettings()">
+                                        <i class="fas fa-save me-1"></i> Simpan Pengaturan Umum
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Integrasi WhatsApp -->
+                        <div class="col-lg-6 mb-4">
+                            <div class="card settings-card">
+                                <div class="card-header d-flex justify-content-between align-items-center">
+                                    <div>
+                                        <i class="fab fa-whatsapp me-2"></i> Integrasi WhatsApp (Fonnte)
+                                    </div>
+                                    <div>
+                                        <span class="api-status" id="api-status-indicator"></span>
+                                        <span id="api-status-text">Mengecek...</span>
+                                    </div>
+                                </div>
+                                <div class="card-body">
+                                    <div class="mb-3">
+                                        <label for="whatsapp-api" class="form-label">API Key Fonnte</label>
+                                        <div class="input-group">
+                                            <input type="password" class="form-control" id="whatsapp-api" placeholder="Masukkan API Key Fonnte">
+                                            <button class="btn btn-outline-secondary" type="button" id="toggle-api-key">
+                                                <i class="fas fa-eye"></i>
+                                            </button>
+                                        </div>
+                                        <div class="form-text">
+                                            Dapatkan API Key dari <a href="https://fonnte.com" target="_blank">fonnte.com</a>
+                                        </div>
+                                    </div>
+                                    <div class="mb-3">
+                                        <label for="whatsapp-number" class="form-label">Nomor WhatsApp Admin</label>
+                                        <input type="text" class="form-control" id="whatsapp-number" placeholder="Contoh: 628123456789">
+                                        <div class="form-text">
+                                            Nomor ini akan digunakan untuk notifikasi sistem
+                                        </div>
+                                    </div>
+                                    <div class="mb-3">
+                                        <label for="whatsapp-sender" class="form-label">Nama Pengirim</label>
+                                        <input type="text" class="form-control" id="whatsapp-sender" placeholder="Nama yang akan ditampilkan di WhatsApp">
+                                    </div>
+                                    <div class="mb-3 form-check">
+                                        <input type="checkbox" class="form-check-input" id="enable-whatsapp">
+                                        <label class="form-check-label" for="enable-whatsapp">Aktifkan notifikasi WhatsApp</label>
+                                    </div>
+                                    <div class="d-flex gap-2">
+                                        <button class="btn btn-success" onclick="testFonnteConnection()">
+                                            <i class="fas fa-bolt me-1"></i> Test Koneksi
+                                        </button>
+                                        <button class="btn btn-primary" onclick="saveWhatsAppSettings()">
+                                            <i class="fas fa-save me-1"></i> Simpan
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="row">
+                        <!-- Pengaturan Notifikasi -->
+                        <div class="col-lg-6 mb-4">
+                            <div class="card settings-card">
+                                <div class="card-header">
+                                    <i class="fas fa-bell me-2"></i> Pengaturan Notifikasi
+                                </div>
+                                <div class="card-body">
+                                    <h6 class="mb-3">Jenis Notifikasi</h6>
+                                    <div class="mb-3 form-check">
+                                        <input type="checkbox" class="form-check-input" id="notif-schedule">
+                                        <label class="form-check-label" for="notif-schedule">Pengingat jadwal kegiatan</label>
+                                    </div>
+                                    <div class="mb-3 form-check">
+                                        <input type="checkbox" class="form-check-input" id="notif-task">
+                                        <label class="form-check-label" for="notif-task">Pengingat tugas</label>
+                                    </div>
+                                    <div class="mb-3 form-check">
+                                        <input type="checkbox" class="form-check-input" id="notif-attendance">
+                                        <label class="form-check-label" for="notif-attendance">Notifikasi kehadiran</label>
+                                    </div>
+                                    <div class="mb-3 form-check">
+                                        <input type="checkbox" class="form-check-input" id="notif-sp">
+                                        <label class="form-check-label" for="notif-sp">Notifikasi Surat Peringatan</label>
+                                    </div>
+                                    <div class="mb-3 form-check">
+                                        <input type="checkbox" class="form-check-input" id="notif-reward">
+                                        <label class="form-check-label" for="notif-reward">Notifikasi reward</label>
+                                    </div>
+
+                                    <hr class="my-4">
+
+                                    <h6 class="mb-3">Waktu Pengingat</h6>
+                                    <div class="mb-3">
+                                        <label for="reminder-time" class="form-label">Pengingat jadwal (jam sebelum acara)</label>
+                                        <input type="number" class="form-control" id="reminder-time" min="1" max="168" value="24">
+                                    </div>
+                                    <div class="mb-3">
+                                        <label for="task-reminder-time" class="form-label">Pengingat tugas (jam sebelum deadline)</label>
+                                        <input type="number" class="form-control" id="task-reminder-time" min="1" max="168" value="48">
+                                    </div>
+
+                                    <button class="btn btn-primary" onclick="saveNotificationSettings()">
+                                        <i class="fas fa-save me-1"></i> Simpan Pengaturan Notifikasi
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Pengaturan Sistem SP -->
+                        <div class="col-lg-6 mb-4">
+                            <div class="card settings-card">
+                                <div class="card-header">
+                                    <i class="fas fa-exclamation-triangle me-2"></i> Pengaturan Sistem Surat Peringatan
+                                </div>
+                                <div class="card-body">
+                                    <div class="mb-3 form-check">
+                                        <input type="checkbox" class="form-check-input" id="auto-sp">
+                                        <label class="form-check-label" for="auto-sp">Aktifkan SP Otomatis</label>
+                                        <div class="form-text">
+                                            Sistem akan secara otomatis memberikan SP berdasarkan pelanggaran
+                                        </div>
+                                    </div>
+
+                                    <h6 class="mb-3 mt-4">Aturan SP Otomatis</h6>
+                                    <div class="mb-3">
+                                        <label for="sp1-threshold" class="form-label">SP1 setelah berapa kali terlambat?</label>
+                                        <input type="number" class="form-control" id="sp1-threshold" min="1" max="10" value="3">
+                                    </div>
+                                    <div class="mb-3">
+                                        <label for="sp2-threshold" class="form-label">SP2 setelah berapa kali tidak hadir?</label>
+                                        <input type="number" class="form-control" id="sp2-threshold" min="1" max="10" value="2">
+                                    </div>
+                                    <div class="mb-3">
+                                        <label for="sp3-threshold" class="form-label">SP3 setelah berapa kali pelanggaran?</label>
+                                        <input type="number" class="form-control" id="sp3-threshold" min="1" max="10" value="5">
+                                    </div>
+
+                                    <hr class="my-4">
+
+                                    <h6 class="mb-3">Reset Poin & SP</h6>
+                                    <div class="mb-3">
+                                        <label for="point-reset" class="form-label">Reset poin setiap</label>
+                                        <select class="form-select" id="point-reset">
+                                            <option value="month">Bulan</option>
+                                            <option value="semester" selected>Semester</option>
+                                            <option value="year">Tahun</option>
+                                            <option value="never">Tidak pernah</option>
+                                        </select>
+                                    </div>
+                                    <div class="mb-3">
+                                        <label for="sp-reset" class="form-label">Reset SP setiap</label>
+                                        <select class="form-select" id="sp-reset">
+                                            <option value="semester" selected>Semester</option>
+                                            <option value="year">Tahun</option>
+                                            <option value="never">Tidak pernah</option>
+                                        </select>
+                                    </div>
+
+                                    <button class="btn btn-primary" onclick="saveSPSettings()">
+                                        <i class="fas fa-save me-1"></i> Simpan Pengaturan SP
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="row">
+                        <!-- Pengaturan Tampilan -->
+                        <div class="col-lg-6 mb-4">
+                            <div class="card settings-card">
+                                <div class="card-header">
+                                    <i class="fas fa-palette me-2"></i> Pengaturan Tampilan
+                                </div>
+                                <div class="card-body">
+                                    <div class="mb-3">
+                                        <label for="theme" class="form-label">Tema Warna</label>
+                                        <select class="form-select" id="theme">
+                                            <option value="default">Default (Biru)</option>
+                                            <option value="green">Hijau</option>
+                                            <option value="purple">Ungu</option>
+                                            <option value="dark">Gelap</option>
+                                        </select>
+                                    </div>
+                                    <div class="mb-3">
+                                        <label for="dashboard-layout" class="form-label">Tata Letak Dashboard</label>
+                                        <select class="form-select" id="dashboard-layout">
+                                            <option value="standard">Standard</option>
+                                            <option value="compact">Kompak</option>
+                                            <option value="detailed">Detail</option>
+                                        </select>
+                                    </div>
+                                    <div class="mb-3 form-check">
+                                        <input type="checkbox" class="form-check-input" id="show-charts">
+                                        <label class="form-check-label" for="show-charts">Tampilkan grafik di dashboard</label>
+                                    </div>
+                                    <div class="mb-3 form-check">
+                                        <input type="checkbox" class="form-check-input" id="show-recent">
+                                        <label class="form-check-label" for="show-recent">Tampilkan aktivitas terbaru</label>
+                                    </div>
+                                    <div class="mb-3 form-check">
+                                        <input type="checkbox" class="form-check-input" id="compact-tables">
+                                        <label class="form-check-label" for="compact-tables">Tampilan tabel kompak</label>
+                                    </div>
+
+                                    <button class="btn btn-primary" onclick="saveDisplaySettings()">
+                                        <i class="fas fa-save me-1"></i> Simpan Pengaturan Tampilan
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Pengaturan Keamanan -->
+                        <div class="col-lg-6 mb-4">
+                            <div class="card danger-card">
+                                <div class="card-header">
+                                    <i class="fas fa-shield-alt me-2"></i> Pengaturan Keamanan & Backup
+                                </div>
+                                <div class="card-body">
+                                    <h6 class="mb-3">Ubah Password</h6>
+                                    <div class="mb-3">
+                                        <label for="current-password" class="form-label">Password Saat Ini</label>
+                                        <input type="password" class="form-control" id="current-password">
+                                    </div>
+                                    <div class="mb-3">
+                                        <label for="new-password" class="form-label">Password Baru</label>
+                                        <input type="password" class="form-control" id="new-password">
+                                    </div>
+                                    <div class="mb-3">
+                                        <label for="confirm-password" class="form-label">Konfirmasi Password Baru</label>
+                                        <input type="password" class="form-control" id="confirm-password">
+                                    </div>
+                                    <button class="btn btn-warning mb-4" onclick="changePassword()">
+                                        <i class="fas fa-key me-1"></i> Ubah Password
+                                    </button>
+
+                                    <hr class="my-4">
+
+                                    <h6 class="mb-3">Backup & Restore Data</h6>
+                                    <div class="d-flex gap-2 mb-3">
+                                        <button class="btn btn-success" onclick="backupData()">
+                                            <i class="fas fa-download me-1"></i> Backup Data
+                                        </button>
+                                        <button class="btn btn-info" onclick="restoreData()">
+                                            <i class="fas fa-upload me-1"></i> Restore Data
+                                        </button>
+                                        <input type="file" id="restore-file" style="display: none;" accept=".json">
+                                    </div>
+
+                                    <hr class="my-4">
+
+                                    <h6 class="mb-3 text-danger">Zona Berbahaya</h6>
+                                    <div class="d-flex gap-2">
+                                        <button class="btn btn-outline-danger" onclick="resetSystem()">
+                                            <i class="fas fa-redo me-1"></i> Reset ke Pengaturan Default
+                                        </button>
+                                        <button class="btn btn-danger" onclick="clearAllData()">
+                                            <i class="fas fa-trash me-1"></i> Hapus Semua Data
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Informasi Sistem -->
+                    <div class="card">
+                        <div class="card-header">
+                            <i class="fas fa-info-circle me-2"></i> Informasi Sistem
+                        </div>
+                        <div class="card-body">
+                            <div class="row">
+                                <div class="col-md-6">
+                                    <table class="table table-borderless">
+                                        <tr>
+                                            <td width="40%"><strong>Versi Sistem</strong></td>
+                                            <td id="system-version">1.0.0</td>
+                                        </tr>
+                                        <tr>
+                                            <td><strong>Terakhir Diupdate</strong></td>
+                                            <td id="last-update">-</td>
+                                        </tr>
+                                        <tr>
+                                            <td><strong>Total Data Anggota</strong></td>
+                                            <td id="total-members-count">0</td>
+                                        </tr>
+                                        <tr>
+                                            <td><strong>Total Data Kegiatan</strong></td>
+                                            <td id="total-schedules-count">0</td>
+                                        </tr>
+                                    </table>
+                                </div>
+                                <div class="col-md-6">
+                                    <table class="table table-borderless">
+                                        <tr>
+                                            <td width="40%"><strong>Penyimpanan Digunakan</strong></td>
+                                            <td id="storage-used">0 KB</td>
+                                        </tr>
+                                        <tr>
+                                            <td><strong>Browser</strong></td>
+                                            <td id="browser-info">-</td>
+                                        </tr>
+                                        <tr>
+                                            <td><strong>Ukuran Layar</strong></td>
+                                            <td id="screen-size">-</td>
+                                        </tr>
+                                        <tr>
+                                            <td><strong>Status Online</strong></td>
+                                            <td><span class="badge bg-success">Online</span></td>
+                                        </tr>
+                                    </table>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modals -->
+    <!-- Add Member Modal -->
+    <div class="modal fade" id="addMemberModal" tabindex="-1" aria-labelledby="addMemberModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="addMemberModalLabel">Tambah Anggota Baru</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <form id="add-member-form">
+                        <div class="mb-3">
+                            <label for="member-name" class="form-label">Nama Lengkap</label>
+                            <input type="text" class="form-control" id="member-name" required>
+                        </div>
+                        <div class="mb-3">
+                            <label for="member-nim" class="form-label">NIM</label>
+                            <input type="text" class="form-control" id="member-nim" required>
+                        </div>
+                        <div class="mb-3">
+                            <label for="member-email" class="form-label">Email</label>
+                            <input type="email" class="form-control" id="member-email">
+                        </div>
+                        <div class="mb-3">
+                            <label for="member-phone" class="form-label">Nomor Telepon</label>
+                            <input type="text" class="form-control" id="member-phone">
+                        </div>
+                        <div class="mb-3">
+                            <label for="member-position" class="form-label">Posisi</label>
+                            <select class="form-select" id="member-position">
+                                <option value="Anggota">Anggota</option>
+                                <option value="Ketua">Ketua</option>
+                                <option value="Wakil Ketua">Wakil Ketua</option>
+                                <option value="Sekretaris">Sekretaris</option>
+                                <option value="Bendahara">Bendahara</option>
+                                <option value="Koordinator">Koordinator</option>
+                            </select>
+                        </div>
+                    </form>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Batal</button>
+                    <button type="button" class="btn btn-primary" id="save-member">Simpan</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Add Schedule Modal -->
+    <div class="modal fade" id="addScheduleModal" tabindex="-1" aria-labelledby="addScheduleModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="addScheduleModalLabel">Tambah Jadwal Kegiatan</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <form id="add-schedule-form">
+                        <div class="mb-3">
+                            <label for="schedule-title" class="form-label">Nama Kegiatan</label>
+                            <input type="text" class="form-control" id="schedule-title" required>
+                        </div>
+                        <div class="mb-3">
+                            <label for="schedule-date" class="form-label">Tanggal</label>
+                            <input type="date" class="form-control" id="schedule-date" required>
+                        </div>
+                        <div class="mb-3">
+                            <label for="schedule-time" class="form-label">Waktu</label>
+                            <input type="time" class="form-control" id="schedule-time" required>
+                        </div>
+                        <div class="mb-3">
+                            <label for="schedule-location" class="form-label">Lokasi</label>
+                            <input type="text" class="form-control" id="schedule-location">
+                        </div>
+                        <div class="mb-3">
+                            <label for="schedule-description" class="form-label">Deskripsi</label>
+                            <textarea class="form-control" id="schedule-description" rows="3"></textarea>
+                        </div>
+                    </form>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Batal</button>
+                    <button type="button" class="btn btn-primary" id="save-schedule">Simpan</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Add Task Modal -->
+    <div class="modal fade" id="addTaskModal" tabindex="-1" aria-labelledby="addTaskModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="addTaskModalLabel">Tambah Tugas</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <form id="add-task-form">
+                        <div class="mb-3">
+                            <label for="task-title" class="form-label">Nama Tugas</label>
+                            <input type="text" class="form-control" id="task-title" required>
+                        </div>
+                        <div class="mb-3">
+                            <label for="task-description" class="form-label">Deskripsi</label>
+                            <textarea class="form-control" id="task-description" rows="3"></textarea>
+                        </div>
+                        <div class="mb-3">
+                            <label for="task-assignee" class="form-label">Penugasan</label>
+                            <select class="form-select" id="task-assignee" multiple>
+                                <!-- Options will be populated dynamically -->
+                            </select>
+                        </div>
+                        <div class="mb-3">
+                            <label for="task-deadline" class="form-label">Deadline</label>
+                            <input type="datetime-local" class="form-control" id="task-deadline" required>
+                        </div>
+                        <div class="mb-3">
+                            <label for="task-priority" class="form-label">Prioritas</label>
+                            <select class="form-select" id="task-priority">
+                                <option value="low">Rendah</option>
+                                <option value="medium" selected>Sedang</option>
+                                <option value="high">Tinggi</option>
+                            </select>
+                        </div>
+                    </form>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Batal</button>
+                    <button type="button" class="btn btn-primary" id="save-task">Simpan</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Add Attendance Modal -->
+    <div class="modal fade" id="addAttendanceModal" tabindex="-1" aria-labelledby="addAttendanceModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="addAttendanceModalLabel">Catat Kehadiran</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <form id="add-attendance-form">
+                        <div class="mb-3">
+                            <label for="attendance-schedule" class="form-label">Kegiatan</label>
+                            <select class="form-select" id="attendance-schedule" required>
+                                <!-- Options will be populated dynamically -->
+                            </select>
+                        </div>
+                        <div class="mb-3">
+                            <label for="attendance-member" class="form-label">Anggota</label>
+                            <select class="form-select" id="attendance-member" required>
+                                <!-- Options will be populated dynamically -->
+                            </select>
+                        </div>
+                        <div class="mb-3">
+                            <label for="attendance-status" class="form-label">Status</label>
+                            <select class="form-select" id="attendance-status" required>
+                                <option value="present">Hadir</option>
+                                <option value="late">Terlambat</option>
+                                <option value="absent">Tidak Hadir</option>
+                            </select>
+                        </div>
+                        <div class="mb-3">
+                            <label for="attendance-notes" class="form-label">Keterangan</label>
+                            <textarea class="form-control" id="attendance-notes" rows="2"></textarea>
+                        </div>
+                    </form>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Batal</button>
+                    <button type="button" class="btn btn-primary" id="save-attendance">Simpan</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Add Reward Modal -->
+    <div class="modal fade" id="addRewardModal" tabindex="-1" aria-labelledby="addRewardModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="addRewardModalLabel">Beri Reward</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <form id="add-reward-form">
+                        <div class="mb-3">
+                            <label for="reward-member" class="form-label">Anggota</label>
+                            <select class="form-select" id="reward-member" required>
+                                <!-- Options will be populated dynamically -->
+                            </select>
+                        </div>
+                        <div class="mb-3">
+                            <label for="reward-type" class="form-label">Jenis Reward</label>
+                            <select class="form-select" id="reward-type" required>
+                                <option value="poin">Poin</option>
+                                <option value="sertifikat">Sertifikat</option>
+                                <option value="penghargaan">Penghargaan</option>
+                            </select>
+                        </div>
+                        <div class="mb-3" id="reward-points-container">
+                            <label for="reward-points" class="form-label">Jumlah Poin</label>
+                            <input type="number" class="form-control" id="reward-points" value="10">
+                        </div>
+                        <div class="mb-3">
+                            <label for="reward-description" class="form-label">Deskripsi</label>
+                            <textarea class="form-control" id="reward-description" rows="3" required></textarea>
+                        </div>
+                    </form>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Batal</button>
+                    <button type="button" class="btn btn-primary" id="save-reward">Simpan</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Add SP Modal -->
+    <div class="modal fade" id="addSPModal" tabindex="-1" aria-labelledby="addSPModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="addSPModalLabel">Beri Surat Peringatan</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <form id="add-sp-form">
+                        <div class="mb-3">
+                            <label for="sp-member" class="form-label">Anggota</label>
+                            <select class="form-select" id="sp-member" required>
+                                <!-- Options will be populated dynamically -->
+                            </select>
+                        </div>
+                        <div class="mb-3">
+                            <label for="sp-level" class="form-label">Level SP</label>
+                            <select class="form-select" id="sp-level" required>
+                                <option value="1">SP 1</option>
+                                <option value="2">SP 2</option>
+                                <option value="3">SP 3</option>
+                            </select>
+                        </div>
+                        <div class="mb-3">
+                            <label for="sp-reason" class="form-label">Alasan</label>
+                            <select class="form-select" id="sp-reason" required>
+                                <option value="terlambat">Terlambat</option>
+                                <option value="tidak_hadir">Tidak Hadir</option>
+                                <option value="tugas_terlambat">Tugas Terlambat</option>
+                                <option value="pelanggaran_lain">Pelanggaran Lain</option>
+                            </select>
+                        </div>
+                        <div class="mb-3">
+                            <label for="sp-description" class="form-label">Deskripsi</label>
+                            <textarea class="form-control" id="sp-description" rows="3" required></textarea>
+                        </div>
+                    </form>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Batal</button>
+                    <button type="button" class="btn btn-primary" id="save-sp">Simpan</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Bootstrap JS -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
+    <!-- Chart.js -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    
+    <script>
+        // Sample data for the application
+        const sampleData = {
+            members: [
+                { id: 1, name: "Rama Agung Supriyadi", nim: "25051214179", email: "rama@example.com", phone: "08123456789", position: "Ketua", status: "Aktif", points: 85 },
+                { id: 2, name: "Felix Agam", nim: "25051214172", email: "felix@example.com", phone: "08123456788", position: "Anggota", status: "Aktif", points: 72 },
+                { id: 3, name: "Muhammad Galang Insan S", nim: "25051214200", email: "galang@example.com", phone: "08123456787", position: "Sekretaris", status: "Aktif", points: 90 },
+                { id: 4, name: "Muhammad Fathur Rozaq", nim: "25051214203", email: "fathur@example.com", phone: "08123456786", position: "Bendahara", status: "Aktif", points: 68 },
+                { id: 5, name: "Fatta Daud Rahman", nim: "25051214192", email: "fatta@example.com", phone: "08123456785", position: "Anggota", status: "Aktif", points: 75 }
+            ],
+            schedules: [
+                { id: 1, title: "Rapat Paripurna", date: "2025-11-01", time: "19:00", location: "Aula FT", description: "Rapat pembahasan program kerja semester" },
+                { id: 2, title: "Pelatihan Kepemimpinan", date: "2025-11-05", time: "14:00", location: "Ruang Seminar", description: "Pelatihan untuk pengurus inti" },
+                { id: 3, title: "Monitoring Program Kerja", date: "2025-11-10", time: "16:00", location: "Online", description: "Evaluasi progress program kerja" }
+            ],
+            tasks: [
+                { id: 1, title: "Membuat Proposal Acara", description: "Proposal acara tahunan organisasi", assignee: [1, 3], deadline: "2025-11-05T23:59", status: "pending", priority: "high" },
+                { id: 2, title: "Laporan Keuangan", description: "Laporan keuangan bulan Oktober", assignee: [4], deadline: "2025-11-03T23:59", status: "completed", priority: "medium" },
+                { id: 3, title: "Persiapan Materi Pelatihan", description: "Mempersiapkan materi untuk pelatihan kepemimpinan", assignee: [2, 5], deadline: "2025-11-04T12:00", status: "pending", priority: "medium" }
+            ],
+            attendance: [
+                { id: 1, scheduleId: 1, memberId: 1, status: "present", notes: "" },
+                { id: 2, scheduleId: 1, memberId: 2, status: "late", notes: "Terlambat 10 menit" },
+                { id: 3, scheduleId: 1, memberId: 3, status: "present", notes: "" },
+                { id: 4, scheduleId: 1, memberId: 4, status: "absent", notes: "Sakit" },
+                { id: 5, scheduleId: 1, memberId: 5, status: "present", notes: "" }
+            ],
+            rewards: [
+                { id: 1, memberId: 3, type: "poin", points: 10, description: "Menyelesaikan tugas tepat waktu", date: "2025-10-25" },
+                { id: 2, memberId: 1, type: "sertifikat", points: 0, description: "Ketua terbaik bulan Oktober", date: "2025-10-30" }
+            ],
+            sps: [
+                { id: 1, memberId: 4, level: 1, reason: "tidak_hadir", description: "Tidak hadir rapat tanpa keterangan", date: "2025-10-20" },
+                { id: 2, memberId: 2, level: 1, reason: "terlambat", description: "Terlambat menghadiri kegiatan 3 kali", date: "2025-10-22" }
+            ],
+            messageHistory: [
+                { id: 1, date: "2025-10-25 10:30", recipient: "Rama Agung Supriyadi", type: "Reminder Jadwal", status: "Terkirim" },
+                { id: 2, date: "2025-10-24 15:45", recipient: "Felix Agam", type: "Reminder Tugas", status: "Terkirim" },
+                { id: 3, date: "2025-10-23 09:15", recipient: "Muhammad Fathur Rozaq", type: "Notifikasi SP", status: "Gagal" }
+            ],
+            settings: {
+                general: {
+                    organizationName: "Organisasi Mahasiswa",
+                    organizationDescription: "Organisasi mahasiswa untuk pengembangan soft skills dan kepemimpinan",
+                    academicYear: "2025/2026",
+                    timezone: "WIB",
+                    language: "id"
+                },
+                whatsapp: {
+                    apiKey: "",
+                    adminNumber: "",
+                    senderName: "HR System",
+                    enabled: true
+                },
+                notifications: {
+                    schedule: true,
+                    task: true,
+                    attendance: true,
+                    sp: true,
+                    reward: true,
+                    reminderTime: 24,
+                    taskReminderTime: 48
+                },
+                spSystem: {
+                    autoSP: true,
+                    sp1Threshold: 3,
+                    sp2Threshold: 2,
+                    sp3Threshold: 5,
+                    pointReset: "semester",
+                    spReset: "semester"
+                },
+                display: {
+                    theme: "default",
+                    dashboardLayout: "standard",
+                    showCharts: true,
+                    showRecent: true,
+                    compactTables: false
+                }
+            }
+        };
+
+        // Initialize data from localStorage or use sample data
+        let data = JSON.parse(localStorage.getItem('hrSystemData')) || sampleData;
+
+        // Save data to localStorage
+        function saveData() {
+            localStorage.setItem('hrSystemData', JSON.stringify(data));
+        }
+
+        // Navigation
+        document.querySelectorAll('.sidebar .nav-link').forEach(link => {
+            link.addEventListener('click', function(e) {
+                e.preventDefault();
+                
+                // Remove active class from all links and sections
+                document.querySelectorAll('.sidebar .nav-link').forEach(item => {
+                    item.classList.remove('active');
+                });
+                document.querySelectorAll('.section').forEach(section => {
+                    section.classList.remove('active');
+                });
+                
+                // Add active class to clicked link and corresponding section
+                this.classList.add('active');
+                const sectionId = this.getAttribute('data-section');
+                document.getElementById(sectionId).classList.add('active');
+                
+                // Refresh the section data
+                refreshSection(sectionId);
+            });
+        });
+
+        // Refresh section data
+        function refreshSection(sectionId) {
+            switch(sectionId) {
+                case 'dashboard':
+                    updateDashboard();
+                    break;
+                case 'members':
+                    loadMembersTable();
+                    break;
+                case 'schedule':
+                    loadCalendar();
+                    break;
+                case 'tasks':
+                    loadTasksTable();
+                    break;
+                case 'attendance':
+                    loadAttendanceTable();
+                    break;
+                case 'rewards':
+                    loadRewardsAndSP();
+                    break;
+                case 'automation':
+                    loadAutomationSection();
+                    break;
+                case 'reports':
+                    loadReports();
+                    break;
+                case 'settings':
+                    loadSettings();
+                    break;
+            }
+        }
+
+        // Update dashboard with current data
+        function updateDashboard() {
+            // Update stats
+            document.getElementById('total-members').textContent = data.members.length;
+            
+            // Calculate attendance rate
+            const totalAttendance = data.attendance.length;
+            const presentAttendance = data.attendance.filter(a => a.status === 'present').length;
+            const attendanceRate = totalAttendance > 0 ? Math.round((presentAttendance / totalAttendance) * 100) : 0;
+            document.getElementById('attendance-rate').textContent = `${attendanceRate}%`;
+            
+            // Count pending tasks
+            const pendingTasks = data.tasks.filter(t => t.status === 'pending').length;
+            document.getElementById('pending-tasks').textContent = pendingTasks;
+            
+            // Count active SPs
+            const activeSPs = data.sps.length;
+            document.getElementById('active-sp').textContent = activeSPs;
+            
+            // Load upcoming schedule
+            const upcomingSchedule = document.getElementById('upcoming-schedule');
+            upcomingSchedule.innerHTML = '';
+            
+            const today = new Date();
+            const upcomingEvents = data.schedules.filter(s => new Date(s.date) >= today)
+                .sort((a, b) => new Date(a.date) - new Date(b.date))
+                .slice(0, 5);
+                
+            if (upcomingEvents.length === 0) {
+                upcomingSchedule.innerHTML = '<p class="text-muted text-center">Tidak ada jadwal mendatang</p>';
+            } else {
+                upcomingEvents.forEach(event => {
+                    const eventDate = new Date(event.date);
+                    const formattedDate = eventDate.toLocaleDateString('id-ID', { 
+                        weekday: 'short', 
+                        year: 'numeric', 
+                        month: 'short', 
+                        day: 'numeric' 
+                    });
+                    
+                    const eventItem = document.createElement('div');
+                    eventItem.className = 'list-group-item d-flex justify-content-between align-items-center';
+                    eventItem.innerHTML = `
+                        <div>
+                            <h6 class="mb-1">${event.title}</h6>
+                            <small class="text-muted">${formattedDate} | ${event.time} | ${event.location}</small>
+                        </div>
+                        <span class="badge bg-primary rounded-pill">${event.time}</span>
+                    `;
+                    upcomingSchedule.appendChild(eventItem);
+                });
+            }
+            
+            // Load recent tasks
+            const recentTasks = document.getElementById('recent-tasks');
+            recentTasks.innerHTML = '';
+            
+            const sortedTasks = [...data.tasks].sort((a, b) => new Date(a.deadline) - new Date(b.deadline)).slice(0, 5);
+            
+            if (sortedTasks.length === 0) {
+                recentTasks.innerHTML = '<p class="text-muted text-center">Tidak ada tugas</p>';
+            } else {
+                sortedTasks.forEach(task => {
+                    const taskDeadline = new Date(task.deadline);
+                    const formattedDeadline = taskDeadline.toLocaleDateString('id-ID', { 
+                        year: 'numeric', 
+                        month: 'short', 
+                        day: 'numeric',
+                        hour: '2-digit',
+                        minute: '2-digit'
+                    });
+                    
+                    const priorityClass = `task-priority-${task.priority}`;
+                    const statusBadge = task.status === 'completed' ? 
+                        '<span class="badge bg-success">Selesai</span>' : 
+                        '<span class="badge bg-warning">Pending</span>';
+                    
+                    const assigneeNames = task.assignee.map(id => {
+                        const member = data.members.find(m => m.id === id);
+                        return member ? member.name : 'Unknown';
+                    }).join(', ');
+                    
+                    const taskItem = document.createElement('div');
+                    taskItem.className = `list-group-item ${priorityClass}`;
+                    taskItem.innerHTML = `
+                        <div class="d-flex w-100 justify-content-between">
+                            <h6 class="mb-1">${task.title}</h6>
+                            ${statusBadge}
+                        </div>
+                        <p class="mb-1">${task.description}</p>
+                        <small class="text-muted">Penugasan: ${assigneeNames} | Deadline: ${formattedDeadline}</small>
+                    `;
+                    recentTasks.appendChild(taskItem);
+                });
+            }
+            
+            // Load attendance chart
+            loadAttendanceChart();
+        }
+
+        // Load attendance chart
+        function loadAttendanceChart() {
+            const ctx = document.getElementById('attendanceChart').getContext('2d');
+            
+            // Sample data for the chart
+            const months = ['Jul', 'Agu', 'Sep', 'Okt', 'Nov', 'Des'];
+            const presentData = [85, 78, 82, 88, 90, 0];
+            const lateData = [10, 15, 12, 8, 5, 0];
+            const absentData = [5, 7, 6, 4, 5, 0];
+            
+            new Chart(ctx, {
+                type: 'line',
+                data: {
+                    labels: months,
+                    datasets: [
+                        {
+                            label: 'Hadir',
+                            data: presentData,
+                            borderColor: '#2ecc71',
+                            backgroundColor: 'rgba(46, 204, 113, 0.1)',
+                            tension: 0.3,
+                            fill: true
+                        },
+                        {
+                            label: 'Terlambat',
+                            data: lateData,
+                            borderColor: '#f39c12',
+                            backgroundColor: 'rgba(243, 156, 18, 0.1)',
+                            tension: 0.3,
+                            fill: true
+                        },
+                        {
+                            label: 'Tidak Hadir',
+                            data: absentData,
+                            borderColor: '#e74c3c',
+                            backgroundColor: 'rgba(231, 76, 60, 0.1)',
+                            tension: 0.3,
+                            fill: true
+                        }
+                    ]
+                },
+                options: {
+                    responsive: true,
+                    plugins: {
+                        legend: {
+                            position: 'top',
+                        },
+                        title: {
+                            display: true,
+                            text: 'Trend Kehadiran 6 Bulan Terakhir'
+                        }
+                    },
+                    scales: {
+                        y: {
+                            beginAtZero: true,
+                            max: 100,
+                            ticks: {
+                                callback: function(value) {
+                                    return value + '%';
+                                }
+                            }
+                        }
+                    }
+                }
+            });
+        }
+
+        // Load members table
+        function loadMembersTable() {
+            const tableBody = document.querySelector('#members-table tbody');
+            tableBody.innerHTML = '';
+            
+            data.members.forEach(member => {
+                const statusBadge = member.status === 'Aktif' ? 
+                    '<span class="badge bg-success">Aktif</span>' : 
+                    '<span class="badge bg-secondary">Non-Aktif</span>';
+                
+                const row = document.createElement('tr');
+                row.innerHTML = `
+                    <td>${member.id}</td>
+                    <td>${member.name}</td>
+                    <td>${member.nim}</td>
+                    <td>${member.position}</td>
+                    <td>${member.phone}</td>
+                    <td>${statusBadge}</td>
+                    <td>${member.points}</td>
+                    <td>
+                        <button class="btn btn-sm btn-outline-primary" onclick="editMember(${member.id})">
+                            <i class="fas fa-edit"></i>
+                        </button>
+                        <button class="btn btn-sm btn-outline-danger" onclick="deleteMember(${member.id})">
+                            <i class="fas fa-trash"></i>
+                        </button>
+                    </td>
+                `;
+                tableBody.appendChild(row);
+            });
+            
+            // Populate member select options in modals
+            populateMemberSelects();
+        }
+
+        // Populate member select options in various modals
+        function populateMemberSelects() {
+            const memberSelects = [
+                'task-assignee', 
+                'attendance-member', 
+                'reward-member', 
+                'sp-member'
+            ];
+            
+            memberSelects.forEach(selectId => {
+                const select = document.getElementById(selectId);
+                if (select) {
+                    // Clear existing options except the first one if it's a placeholder
+                    if (selectId === 'task-assignee') {
+                        select.innerHTML = '';
+                    } else {
+                        select.innerHTML = '<option value="">Pilih Anggota</option>';
+                    }
+                    
+                    // Add member options
+                    data.members.forEach(member => {
+                        const option = document.createElement('option');
+                        option.value = member.id;
+                        option.textContent = member.name;
+                        select.appendChild(option);
+                    });
+                }
+            });
+        }
+
+        // Load tasks table
+        function loadTasksTable() {
+            const tableBody = document.querySelector('#tasks-table tbody');
+            tableBody.innerHTML = '';
+            
+            data.tasks.forEach(task => {
+                const statusBadge = task.status === 'completed' ? 
+                    '<span class="badge bg-success">Selesai</span>' : 
+                    '<span class="badge bg-warning">Pending</span>';
+                
+                const priorityBadge = task.priority === 'high' ? 
+                    '<span class="badge bg-danger">Tinggi</span>' : 
+                    task.priority === 'medium' ? 
+                    '<span class="badge bg-warning">Sedang</span>' : 
+                    '<span class="badge bg-success">Rendah</span>';
+                
+                const assigneeNames = task.assignee.map(id => {
+                    const member = data.members.find(m => m.id === id);
+                    return member ? member.name : 'Unknown';
+                }).join(', ');
+                
+                const deadline = new Date(task.deadline);
+                const formattedDeadline = deadline.toLocaleDateString('id-ID', { 
+                    year: 'numeric', 
+                    month: 'short', 
+                    day: 'numeric',
+                    hour: '2-digit',
+                    minute: '2-digit'
+                });
+                
+                const row = document.createElement('tr');
+                row.innerHTML = `
+                    <td>${task.id}</td>
+                    <td>${task.title}</td>
+                    <td>${task.description}</td>
+                    <td>${assigneeNames}</td>
+                    <td>${formattedDeadline}</td>
+                    <td>${statusBadge}</td>
+                    <td>${priorityBadge}</td>
+                    <td>
+                        <button class="btn btn-sm btn-outline-primary" onclick="editTask(${task.id})">
+                            <i class="fas fa-edit"></i>
+                        </button>
+                        <button class="btn btn-sm btn-outline-success" onclick="completeTask(${task.id})">
+                            <i class="fas fa-check"></i>
+                        </button>
+                        <button class="btn btn-sm btn-outline-danger" onclick="deleteTask(${task.id})">
+                            <i class="fas fa-trash"></i>
+                        </button>
+                    </td>
+                `;
+                tableBody.appendChild(row);
+            });
+        }
+
+        // Load attendance table
+        function loadAttendanceTable() {
+            const tableBody = document.querySelector('#attendance-table tbody');
+            tableBody.innerHTML = '';
+            
+            data.attendance.forEach(record => {
+                const schedule = data.schedules.find(s => s.id === record.scheduleId);
+                const member = data.members.find(m => m.id === record.memberId);
+                
+                if (!schedule || !member) return;
+                
+                const statusBadge = record.status === 'present' ? 
+                    '<span class="badge bg-success">Hadir</span>' : 
+                    record.status === 'late' ? 
+                    '<span class="badge bg-warning">Terlambat</span>' : 
+                    '<span class="badge bg-danger">Tidak Hadir</span>';
+                
+                const scheduleDate = new Date(schedule.date);
+                const formattedDate = scheduleDate.toLocaleDateString('id-ID', { 
+                    year: 'numeric', 
+                    month: 'short', 
+                    day: 'numeric'
+                });
+                
+                const row = document.createElement('tr');
+                row.innerHTML = `
+                    <td>${record.id}</td>
+                    <td>${formattedDate}</td>
+                    <td>${schedule.title}</td>
+                    <td>${member.name}</td>
+                    <td>${statusBadge}</td>
+                    <td>${record.notes || '-'}</td>
+                    <td>
+                        <button class="btn btn-sm btn-outline-primary" onclick="editAttendance(${record.id})">
+                            <i class="fas fa-edit"></i>
+                        </button>
+                        <button class="btn btn-sm btn-outline-danger" onclick="deleteAttendance(${record.id})">
+                            <i class="fas fa-trash"></i>
+                        </button>
+                    </td>
+                `;
+                tableBody.appendChild(row);
+            });
+            
+            // Populate schedule select in attendance modal
+            const scheduleSelect = document.getElementById('attendance-schedule');
+            if (scheduleSelect) {
+                scheduleSelect.innerHTML = '<option value="">Pilih Kegiatan</option>';
+                data.schedules.forEach(schedule => {
+                    const option = document.createElement('option');
+                    option.value = schedule.id;
+                    option.textContent = `${schedule.title} (${schedule.date})`;
+                    scheduleSelect.appendChild(option);
+                });
+            }
+        }
+
+        // Load rewards and SP
+        function loadRewardsAndSP() {
+            const rewardsList = document.getElementById('rewards-list');
+            const spList = document.getElementById('sp-list');
+            
+            rewardsList.innerHTML = '';
+            spList.innerHTML = '';
+            
+            // Load rewards
+            if (data.rewards.length === 0) {
+                rewardsList.innerHTML = '<p class="text-muted text-center">Belum ada reward</p>';
+            } else {
+                data.rewards.forEach(reward => {
+                    const member = data.members.find(m => m.id === reward.memberId);
+                    if (!member) return;
+                    
+                    const rewardDate = new Date(reward.date);
+                    const formattedDate = rewardDate.toLocaleDateString('id-ID', { 
+                        year: 'numeric', 
+                        month: 'short', 
+                        day: 'numeric'
+                    });
+                    
+                    const rewardItem = document.createElement('div');
+                    rewardItem.className = 'list-group-item';
+                    rewardItem.innerHTML = `
+                        <div class="d-flex w-100 justify-content-between">
+                            <h6 class="mb-1">${member.name}</h6>
+                            <small>${formattedDate}</small>
+                        </div>
+                        <p class="mb-1">${reward.description}</p>
+                        <small class="text-muted">${reward.type === 'poin' ? `+${reward.points} poin` : reward.type}</small>
+                    `;
+                    rewardsList.appendChild(rewardItem);
+                });
+            }
+            
+            // Load SPs
+            if (data.sps.length === 0) {
+                spList.innerHTML = '<p class="text-muted text-center">Belum ada SP</p>';
+            } else {
+                data.sps.forEach(sp => {
+                    const member = data.members.find(m => m.id === sp.memberId);
+                    if (!member) return;
+                    
+                    const spDate = new Date(sp.date);
+                    const formattedDate = spDate.toLocaleDateString('id-ID', { 
+                        year: 'numeric', 
+                        month: 'short', 
+                        day: 'numeric'
+                    });
+                    
+                    const spLevelBadge = sp.level === 1 ? 
+                        '<span class="badge bg-warning">SP 1</span>' : 
+                        sp.level === 2 ? 
+                        '<span class="badge bg-danger">SP 2</span>' : 
+                        '<span class="badge bg-dark">SP 3</span>';
+                    
+                    const spItem = document.createElement('div');
+                    spItem.className = 'list-group-item';
+                    spItem.innerHTML = `
+                        <div class="d-flex w-100 justify-content-between">
+                            <h6 class="mb-1">${member.name}</h6>
+                            <small>${formattedDate}</small>
+                        </div>
+                        <p class="mb-1">${sp.description}</p>
+                        <div class="d-flex justify-content-between align-items-center">
+                            <small class="text-muted">${getSPReasonText(sp.reason)}</small>
+                            ${spLevelBadge}
+                        </div>
+                    `;
+                    spList.appendChild(spItem);
+                });
+            }
+        }
+
+        // Get SP reason text
+        function getSPReasonText(reason) {
+            switch(reason) {
+                case 'terlambat': return 'Terlambat';
+                case 'tidak_hadir': return 'Tidak Hadir';
+                case 'tugas_terlambat': return 'Tugas Terlambat';
+                case 'pelanggaran_lain': return 'Pelanggaran Lain';
+                default: return reason;
+            }
+        }
+
+        // Load automation section
+        function loadAutomationSection() {
+            loadMessageHistory();
+            
+            // Load saved message templates
+            const savedReminderMessage = localStorage.getItem('reminderMessage');
+            const savedTaskReminderMessage = localStorage.getItem('taskReminderMessage');
+            const savedSP1Message = localStorage.getItem('sp1Message');
+            const savedSP2Message = localStorage.getItem('sp2Message');
+            const savedSP3Message = localStorage.getItem('sp3Message');
+            const savedRewardMessage = localStorage.getItem('rewardMessage');
+            
+            if (savedReminderMessage) document.getElementById('reminder-message').value = savedReminderMessage;
+            if (savedTaskReminderMessage) document.getElementById('task-reminder-message').value = savedTaskReminderMessage;
+            if (savedSP1Message) document.getElementById('sp1-message').value = savedSP1Message;
+            if (savedSP2Message) document.getElementById('sp2-message').value = savedSP2Message;
+            if (savedSP3Message) document.getElementById('sp3-message').value = savedSP3Message;
+            if (savedRewardMessage) document.getElementById('reward-message').value = savedRewardMessage;
+            
+            // Load toggle states
+            document.getElementById('reminder-toggle').checked = localStorage.getItem('reminderToggle') !== 'false';
+            document.getElementById('task-reminder-toggle').checked = localStorage.getItem('taskReminderToggle') !== 'false';
+            document.getElementById('sp-notification-toggle').checked = localStorage.getItem('spNotificationToggle') !== 'false';
+            document.getElementById('reward-notification-toggle').checked = localStorage.getItem('rewardNotificationToggle') !== 'false';
+        }
+
+        // Load message history
+        function loadMessageHistory() {
+            const tableBody = document.querySelector('#message-history tbody');
+            tableBody.innerHTML = '';
+            
+            if (data.messageHistory && data.messageHistory.length > 0) {
+                data.messageHistory.forEach(message => {
+                    const statusBadge = message.status === 'Terkirim' ? 
+                        '<span class="badge bg-success">Terkirim</span>' : 
+                        '<span class="badge bg-danger">Gagal</span>';
+                    
+                    const row = document.createElement('tr');
+                    row.innerHTML = `
+                        <td>${message.date}</td>
+                        <td>${message.recipient}</td>
+                        <td>${message.type}</td>
+                        <td>${statusBadge}</td>
+                        <td>
+                            <button class="btn btn-sm btn-outline-primary" onclick="resendMessage(${message.id})">
+                                <i class="fas fa-redo"></i> Kirim Ulang
+                            </button>
+                        </td>
+                    `;
+                    tableBody.appendChild(row);
+                });
+            } else {
+                tableBody.innerHTML = '<tr><td colspan="5" class="text-center">Belum ada riwayat pengiriman</td></tr>';
+            }
+        }
+
+        // Load reports
+        function loadReports() {
+            // Load attendance report chart
+            const attendanceCtx = document.getElementById('attendanceReportChart').getContext('2d');
+            
+            const members = data.members.map(m => m.name);
+            const attendanceRates = data.members.map(member => {
+                const memberAttendance = data.attendance.filter(a => a.memberId === member.id);
+                if (memberAttendance.length === 0) return 0;
+                
+                const presentCount = memberAttendance.filter(a => a.status === 'present').length;
+                return Math.round((presentCount / memberAttendance.length) * 100);
+            });
+            
+            new Chart(attendanceCtx, {
+                type: 'bar',
+                data: {
+                    labels: members,
+                    datasets: [{
+                        label: 'Persentase Kehadiran',
+                        data: attendanceRates,
+                        backgroundColor: '#3498db',
+                        borderColor: '#2980b9',
+                        borderWidth: 1
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    plugins: {
+                        legend: {
+                            display: false
+                        },
+                        title: {
+                            display: true,
+                            text: 'Persentase Kehadiran per Anggota'
+                        }
+                    },
+                    scales: {
+                        y: {
+                            beginAtZero: true,
+                            max: 100,
+                            ticks: {
+                                callback: function(value) {
+                                    return value + '%';
+                                }
+                            }
+                        }
+                    }
+                }
+            });
+            
+            // Load tasks report chart
+            const tasksCtx = document.getElementById('tasksReportChart').getContext('2d');
+            
+            const completedTasks = data.members.map(member => {
+                return data.tasks.filter(task => 
+                    task.assignee.includes(member.id) && task.status === 'completed'
+                ).length;
+            });
+            
+            const pendingTasks = data.members.map(member => {
+                return data.tasks.filter(task => 
+                    task.assignee.includes(member.id) && task.status === 'pending'
+                ).length;
+            });
+            
+            new Chart(tasksCtx, {
+                type: 'bar',
+                data: {
+                    labels: members,
+                    datasets: [
+                        {
+                            label: 'Tugas Selesai',
+                            data: completedTasks,
+                            backgroundColor: '#2ecc71'
+                        },
+                        {
+                            label: 'Tugas Tertunda',
+                            data: pendingTasks,
+                            backgroundColor: '#f39c12'
+                        }
+                    ]
+                },
+                options: {
+                    responsive: true,
+                    plugins: {
+                        title: {
+                            display: true,
+                            text: 'Distribusi Tugas per Anggota'
+                        }
+                    }
+                }
+            });
+            
+            // Load reports table
+            const tableBody = document.querySelector('#reports-table tbody');
+            tableBody.innerHTML = '';
+            
+            data.members.forEach(member => {
+                const memberAttendance = data.attendance.filter(a => a.memberId === member.id);
+                const attendanceRate = memberAttendance.length > 0 ? 
+                    Math.round((memberAttendance.filter(a => a.status === 'present').length / memberAttendance.length) * 100) : 0;
+                
+                const completedTaskCount = data.tasks.filter(task => 
+                    task.assignee.includes(member.id) && task.status === 'completed'
+                ).length;
+                
+                const pendingTaskCount = data.tasks.filter(task => 
+                    task.assignee.includes(member.id) && task.status === 'pending'
+                ).length;
+                
+                const rewardCount = data.rewards.filter(r => r.memberId === member.id).length;
+                const spCount = data.sps.filter(sp => sp.memberId === member.id).length;
+                
+                const row = document.createElement('tr');
+                row.innerHTML = `
+                    <td>${member.name}</td>
+                    <td>${attendanceRate}%</td>
+                    <td>${completedTaskCount}</td>
+                    <td>${pendingTaskCount}</td>
+                    <td>${rewardCount}</td>
+                    <td>${spCount}</td>
+                    <td>${member.points}</td>
+                `;
+                tableBody.appendChild(row);
+            });
+        }
+
+        // Load calendar
+        function loadCalendar() {
+            const calendarEl = document.getElementById('calendar');
+            if (!calendarEl) return;
+            
+            // Simple calendar implementation
+            calendarEl.innerHTML = `
+                <div class="text-center mb-3">
+                    <h4>Kalender Kegiatan</h4>
+                </div>
+                <div class="list-group">
+                    ${data.schedules.map(schedule => {
+                        const scheduleDate = new Date(schedule.date);
+                        const formattedDate = scheduleDate.toLocaleDateString('id-ID', { 
+                            weekday: 'long',
+                            year: 'numeric', 
+                            month: 'long', 
+                            day: 'numeric'
+                        });
+                        
+                        return `
+                            <div class="list-group-item">
+                                <div class="d-flex w-100 justify-content-between">
+                                    <h5 class="mb-1">${schedule.title}</h5>
+                                    <small>${schedule.time}</small>
+                                </div>
+                                <p class="mb-1">${schedule.description}</p>
+                                <small class="text-muted">${formattedDate} | ${schedule.location}</small>
+                            </div>
+                        `;
+                    }).join('')}
+                </div>
+            `;
+        }
+
+        // Load settings
+        function loadSettings() {
+            // Load general settings
+            document.getElementById('organization-name').value = data.settings.general.organizationName;
+            document.getElementById('organization-description').value = data.settings.general.organizationDescription;
+            document.getElementById('academic-year').value = data.settings.general.academicYear;
+            document.getElementById('timezone').value = data.settings.general.timezone;
+            document.getElementById('language').value = data.settings.general.language;
+
+            // Load WhatsApp settings
+            document.getElementById('whatsapp-api').value = data.settings.whatsapp.apiKey;
+            document.getElementById('whatsapp-number').value = data.settings.whatsapp.adminNumber;
+            document.getElementById('whatsapp-sender').value = data.settings.whatsapp.senderName;
+            document.getElementById('enable-whatsapp').checked = data.settings.whatsapp.enabled;
+
+            // Load notification settings
+            document.getElementById('notif-schedule').checked = data.settings.notifications.schedule;
+            document.getElementById('notif-task').checked = data.settings.notifications.task;
+            document.getElementById('notif-attendance').checked = data.settings.notifications.attendance;
+            document.getElementById('notif-sp').checked = data.settings.notifications.sp;
+            document.getElementById('notif-reward').checked = data.settings.notifications.reward;
+            document.getElementById('reminder-time').value = data.settings.notifications.reminderTime;
+            document.getElementById('task-reminder-time').value = data.settings.notifications.taskReminderTime;
+
+            // Load SP settings
+            document.getElementById('auto-sp').checked = data.settings.spSystem.autoSP;
+            document.getElementById('sp1-threshold').value = data.settings.spSystem.sp1Threshold;
+            document.getElementById('sp2-threshold').value = data.settings.spSystem.sp2Threshold;
+            document.getElementById('sp3-threshold').value = data.settings.spSystem.sp3Threshold;
+            document.getElementById('point-reset').value = data.settings.spSystem.pointReset;
+            document.getElementById('sp-reset').value = data.settings.spSystem.spReset;
+
+            // Load display settings
+            document.getElementById('theme').value = data.settings.display.theme;
+            document.getElementById('dashboard-layout').value = data.settings.display.dashboardLayout;
+            document.getElementById('show-charts').checked = data.settings.display.showCharts;
+            document.getElementById('show-recent').checked = data.settings.display.showRecent;
+            document.getElementById('compact-tables').checked = data.settings.display.compactTables;
+
+            // Update system info
+            updateSystemInfo();
+
+            // Check API status
+            checkAPIStatus();
+        }
+
+        // Update system information
+        function updateSystemInfo() {
+            document.getElementById('total-members-count').textContent = data.members.length;
+            document.getElementById('total-schedules-count').textContent = data.schedules.length;
+            
+            // Calculate storage used
+            const storageUsed = JSON.stringify(data).length;
+            document.getElementById('storage-used').textContent = Math.round(storageUsed / 1024) + ' KB';
+            
+            // Browser info
+            document.getElementById('browser-info').textContent = navigator.userAgent.split(' ')[0];
+            
+            // Screen size
+            document.getElementById('screen-size').textContent = `${screen.width} x ${screen.height}`;
+            
+            // Last update
+            const lastUpdate = localStorage.getItem('lastUpdate');
+            document.getElementById('last-update').textContent = lastUpdate || 'Belum ada update';
+        }
+
+        // Check API status
+        function checkAPIStatus() {
+            const apiKey = data.settings.whatsapp.apiKey;
+            const statusIndicator = document.getElementById('api-status-indicator');
+            const statusText = document.getElementById('api-status-text');
+            
+            if (apiKey && apiKey.length > 10) {
+                statusIndicator.className = 'api-status status-connected';
+                statusText.textContent = 'Terkoneksi';
+            } else {
+                statusIndicator.className = 'api-status status-disconnected';
+                statusText.textContent = 'Belum Terkoneksi';
+            }
+        }
+
+        // Save message templates when they change
+        document.getElementById('reminder-message').addEventListener('change', function() {
+            localStorage.setItem('reminderMessage', this.value);
+        });
+        
+        document.getElementById('task-reminder-message').addEventListener('change', function() {
+            localStorage.setItem('taskReminderMessage', this.value);
+        });
+        
+        document.getElementById('sp1-message').addEventListener('change', function() {
+            localStorage.setItem('sp1Message', this.value);
+        });
+        
+        document.getElementById('sp2-message').addEventListener('change', function() {
+            localStorage.setItem('sp2Message', this.value);
+        });
+        
+        document.getElementById('sp3-message').addEventListener('change', function() {
+            localStorage.setItem('sp3Message', this.value);
+        });
+        
+        document.getElementById('reward-message').addEventListener('change', function() {
+            localStorage.setItem('rewardMessage', this.value);
+        });
+
+        // Save toggle states when they change
+        document.getElementById('reminder-toggle').addEventListener('change', function() {
+            localStorage.setItem('reminderToggle', this.checked);
+        });
+        
+        document.getElementById('task-reminder-toggle').addEventListener('change', function() {
+            localStorage.setItem('taskReminderToggle', this.checked);
+        });
+        
+        document.getElementById('sp-notification-toggle').addEventListener('change', function() {
+            localStorage.setItem('spNotificationToggle', this.checked);
+        });
+        
+        document.getElementById('reward-notification-toggle').addEventListener('change', function() {
+            localStorage.setItem('rewardNotificationToggle', this.checked);
+        });
+
+        // Fonnte API Integration
+        const FONNTE_API_URL = 'https://api.fonnte.com/send';
+        
+        // Function to send message via Fonnte
+        async function sendFonnteMessage(phone, message) {
+            const apiToken = localStorage.getItem('fonnteApiToken') || document.getElementById('whatsapp-api').value;
+            
+            if (!apiToken) {
+                alert('API Token Fonnte belum diatur. Silakan atur di bagian Pengaturan.');
+                return { success: false, error: 'API Token tidak ditemukan' };
+            }
+            
+            try {
+                // In a real implementation, you would make an actual API call to Fonnte
+                // For demo purposes, we'll simulate the API call
+                console.log(`Mengirim pesan ke ${phone}: ${message}`);
+                
+                // Simulate API call delay
+                await new Promise(resolve => setTimeout(resolve, 1000));
+                
+                // Simulate random success/failure for demo
+                const success = Math.random() > 0.2; // 80% success rate
+                
+                if (success) {
+                    return { success: true, message: 'Pesan berhasil dikirim' };
+                } else {
+                    return { success: false, error: 'Gagal mengirim pesan' };
+                }
+            } catch (error) {
+                console.error('Error sending message:', error);
+                return { success: false, error: error.message };
+            }
+        }
+
+        // Test Fonnte connection
+        async function testFonnteConnection() {
+            const apiToken = localStorage.getItem('fonnteApiToken') || document.getElementById('whatsapp-api').value;
+            
+            if (!apiToken) {
+                alert('API Token Fonnte belum diatur. Silakan atur di bagian Pengaturan.');
+                return;
+            }
+            
+            // Send test message to the first member
+            if (data.members.length > 0) {
+                const testMember = data.members[0];
+                const message = 'Test koneksi Fonnte: Integrasi WhatsApp berhasil!';
+                
+                const result = await sendFonnteMessage(testMember.phone, message);
+                
+                if (result.success) {
+                    alert('Koneksi Fonnte berhasil! Pesan test telah dikirim.');
+                    addMessageToHistory(new Date().toLocaleString(), testMember.name, 'Test Koneksi', 'Terkirim');
+                } else {
+                    alert('Gagal mengirim pesan test: ' + result.error);
+                    addMessageToHistory(new Date().toLocaleString(), testMember.name, 'Test Koneksi', 'Gagal');
+                }
+            } else {
+                alert('Tidak ada anggota untuk mengirim pesan test.');
+            }
+        }
+
+        // Send schedule reminders
+        async function sendScheduleReminders() {
+            if (!document.getElementById('reminder-toggle').checked) {
+                alert('Fitur reminder jadwal tidak aktif. Aktifkan terlebih dahulu.');
+                return;
+            }
+            
+            const today = new Date();
+            const tomorrow = new Date(today);
+            tomorrow.setDate(tomorrow.getDate() + 1);
+            
+            const tomorrowFormatted = tomorrow.toISOString().split('T')[0];
+            const upcomingSchedules = data.schedules.filter(schedule => schedule.date === tomorrowFormatted);
+            
+            if (upcomingSchedules.length === 0) {
+                alert('Tidak ada jadwal untuk besok.');
+                return;
+            }
+            
+            let successCount = 0;
+            let failCount = 0;
+            
+            for (const schedule of upcomingSchedules) {
+                for (const member of data.members) {
+                    const messageTemplate = document.getElementById('reminder-message').value;
+                    const message = messageTemplate
+                        .replace(/{nama}/g, member.name)
+                        .replace(/{acara}/g, schedule.title)
+                        .replace(/{tanggal}/g, new Date(schedule.date).toLocaleDateString('id-ID'))
+                        .replace(/{waktu}/g, schedule.time)
+                        .replace(/{lokasi}/g, schedule.location);
+                    
+                    const result = await sendFonnteMessage(member.phone, message);
+                    
+                    if (result.success) {
+                        successCount++;
+                        addMessageToHistory(new Date().toLocaleString(), member.name, 'Reminder Jadwal', 'Terkirim');
+                    } else {
+                        failCount++;
+                        addMessageToHistory(new Date().toLocaleString(), member.name, 'Reminder Jadwal', 'Gagal');
+                    }
+                    
+                    // Add delay to avoid rate limiting
+                    await new Promise(resolve => setTimeout(resolve, 500));
+                }
+            }
+            
+            alert(`Reminder jadwal berhasil dikirim:\n${successCount} berhasil, ${failCount} gagal`);
+        }
+
+        // Send task reminders
+        async function sendTaskReminders() {
+            if (!document.getElementById('task-reminder-toggle').checked) {
+                alert('Fitur reminder tugas tidak aktif. Aktifkan terlebih dahulu.');
+                return;
+            }
+            
+            const today = new Date();
+            const tomorrow = new Date(today);
+            tomorrow.setDate(tomorrow.getDate() + 1);
+            
+            const pendingTasks = data.tasks.filter(task => 
+                task.status === 'pending' && 
+                new Date(task.deadline) <= tomorrow
+            );
+            
+            if (pendingTasks.length === 0) {
+                alert('Tidak ada tugas yang mendekati deadline.');
+                return;
+            }
+            
+            let successCount = 0;
+            let failCount = 0;
+            
+            for (const task of pendingTasks) {
+                for (const memberId of task.assignee) {
+                    const member = data.members.find(m => m.id === memberId);
+                    if (!member) continue;
+                    
+                    const messageTemplate = document.getElementById('task-reminder-message').value;
+                    const deadlineFormatted = new Date(task.deadline).toLocaleDateString('id-ID', {
+                        year: 'numeric',
+                        month: 'long',
+                        day: 'numeric',
+                        hour: '2-digit',
+                        minute: '2-digit'
+                    });
+                    
+                    const message = messageTemplate
+                        .replace(/{nama}/g, member.name)
+                        .replace(/{tugas}/g, task.title)
+                        .replace(/{deadline}/g, deadlineFormatted);
+                    
+                    const result = await sendFonnteMessage(member.phone, message);
+                    
+                    if (result.success) {
+                        successCount++;
+                        addMessageToHistory(new Date().toLocaleString(), member.name, 'Reminder Tugas', 'Terkirim');
+                    } else {
+                        failCount++;
+                        addMessageToHistory(new Date().toLocaleString(), member.name, 'Reminder Tugas', 'Gagal');
+                    }
+                    
+                    // Add delay to avoid rate limiting
+                    await new Promise(resolve => setTimeout(resolve, 500));
+                }
+            }
+            
+            alert(`Reminder tugas berhasil dikirim:\n${successCount} berhasil, ${failCount} gagal`);
+        }
+
+        // Send reward notifications
+        async function sendRewardNotifications() {
+            if (!document.getElementById('reward-notification-toggle').checked) {
+                alert('Fitur notifikasi reward tidak aktif. Aktifkan terlebih dahulu.');
+                return;
+            }
+            
+            const recentRewards = data.rewards.filter(reward => {
+                const rewardDate = new Date(reward.date);
+                const today = new Date();
+                const diffTime = Math.abs(today - rewardDate);
+                const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+                return diffDays <= 7; // Rewards from the last 7 days
+            });
+            
+            if (recentRewards.length === 0) {
+                alert('Tidak ada reward baru dalam 7 hari terakhir.');
+                return;
+            }
+            
+            let successCount = 0;
+            let failCount = 0;
+            
+            for (const reward of recentRewards) {
+                const member = data.members.find(m => m.id === reward.memberId);
+                if (!member) continue;
+                
+                const messageTemplate = document.getElementById('reward-message').value;
+                const message = messageTemplate
+                    .replace(/{nama}/g, member.name)
+                    .replace(/{jenis_reward}/g, reward.type)
+                    .replace(/{alasan}/g, reward.description);
+                
+                const result = await sendFonnteMessage(member.phone, message);
+                
+                if (result.success) {
+                    successCount++;
+                    addMessageToHistory(new Date().toLocaleString(), member.name, 'Notifikasi Reward', 'Terkirim');
+                } else {
+                    failCount++;
+                    addMessageToHistory(new Date().toLocaleString(), member.name, 'Notifikasi Reward', 'Gagal');
+                }
+                
+                // Add delay to avoid rate limiting
+                await new Promise(resolve => setTimeout(resolve, 500));
+            }
+            
+            alert(`Notifikasi reward berhasil dikirim:\n${successCount} berhasil, ${failCount} gagal`);
+        }
+
+        // Add message to history
+        function addMessageToHistory(date, recipient, type, status) {
+            if (!data.messageHistory) {
+                data.messageHistory = [];
+            }
+            
+            const newId = data.messageHistory.length > 0 ? 
+                Math.max(...data.messageHistory.map(m => m.id)) + 1 : 1;
+            
+            data.messageHistory.unshift({
+                id: newId,
+                date,
+                recipient,
+                type,
+                status
+            });
+            
+            // Keep only the last 50 messages
+            if (data.messageHistory.length > 50) {
+                data.messageHistory = data.messageHistory.slice(0, 50);
+            }
+            
+            saveData();
+            loadMessageHistory();
+        }
+
+        // Resend message
+        async function resendMessage(messageId) {
+            const message = data.messageHistory.find(m => m.id === messageId);
+            if (!message) return;
+            
+            const member = data.members.find(m => m.name === message.recipient);
+            if (!member) {
+                alert('Anggota tidak ditemukan.');
+                return;
+            }
+            
+            // Determine message content based on type
+            let messageContent = '';
+            if (message.type === 'Reminder Jadwal') {
+                messageContent = document.getElementById('reminder-message').value.replace(/{nama}/g, member.name);
+            } else if (message.type === 'Reminder Tugas') {
+                messageContent = document.getElementById('task-reminder-message').value.replace(/{nama}/g, member.name);
+            } else if (message.type === 'Notifikasi Reward') {
+                messageContent = document.getElementById('reward-message').value.replace(/{nama}/g, member.name);
+            } else {
+                messageContent = `Pesan untuk ${member.name}`;
+            }
+            
+            const result = await sendFonnteMessage(member.phone, messageContent);
+            
+            if (result.success) {
+                alert('Pesan berhasil dikirim ulang.');
+                message.status = 'Terkirim';
+                message.date = new Date().toLocaleString();
+            } else {
+                alert('Gagal mengirim pesan: ' + result.error);
+                message.status = 'Gagal';
+            }
+            
+            saveData();
+            loadMessageHistory();
+        }
+
+        // Toggle API key visibility
+        document.getElementById('toggle-api-key').addEventListener('click', function() {
+            const apiInput = document.getElementById('whatsapp-api');
+            const icon = this.querySelector('i');
+            
+            if (apiInput.type === 'password') {
+                apiInput.type = 'text';
+                icon.className = 'fas fa-eye-slash';
+            } else {
+                apiInput.type = 'password';
+                icon.className = 'fas fa-eye';
+            }
+        });
+
+        // Save general settings
+        function saveGeneralSettings() {
+            data.settings.general.organizationName = document.getElementById('organization-name').value;
+            data.settings.general.organizationDescription = document.getElementById('organization-description').value;
+            data.settings.general.academicYear = document.getElementById('academic-year').value;
+            data.settings.general.timezone = document.getElementById('timezone').value;
+            data.settings.general.language = document.getElementById('language').value;
+            
+            saveData();
+            updateLastUpdate();
+            alert('Pengaturan umum berhasil disimpan!');
+        }
+
+        // Save WhatsApp settings
+        function saveWhatsAppSettings() {
+            data.settings.whatsapp.apiKey = document.getElementById('whatsapp-api').value;
+            data.settings.whatsapp.adminNumber = document.getElementById('whatsapp-number').value;
+            data.settings.whatsapp.senderName = document.getElementById('whatsapp-sender').value;
+            data.settings.whatsapp.enabled = document.getElementById('enable-whatsapp').checked;
+            
+            saveData();
+            updateLastUpdate();
+            checkAPIStatus();
+            alert('Pengaturan WhatsApp berhasil disimpan!');
+        }
+
+        // Save notification settings
+        function saveNotificationSettings() {
+            data.settings.notifications.schedule = document.getElementById('notif-schedule').checked;
+            data.settings.notifications.task = document.getElementById('notif-task').checked;
+            data.settings.notifications.attendance = document.getElementById('notif-attendance').checked;
+            data.settings.notifications.sp = document.getElementById('notif-sp').checked;
+            data.settings.notifications.reward = document.getElementById('notif-reward').checked;
+            data.settings.notifications.reminderTime = parseInt(document.getElementById('reminder-time').value);
+            data.settings.notifications.taskReminderTime = parseInt(document.getElementById('task-reminder-time').value);
+            
+            saveData();
+            updateLastUpdate();
+            alert('Pengaturan notifikasi berhasil disimpan!');
+        }
+
+        // Save SP settings
+        function saveSPSettings() {
+            data.settings.spSystem.autoSP = document.getElementById('auto-sp').checked;
+            data.settings.spSystem.sp1Threshold = parseInt(document.getElementById('sp1-threshold').value);
+            data.settings.spSystem.sp2Threshold = parseInt(document.getElementById('sp2-threshold').value);
+            data.settings.spSystem.sp3Threshold = parseInt(document.getElementById('sp3-threshold').value);
+            data.settings.spSystem.pointReset = document.getElementById('point-reset').value;
+            data.settings.spSystem.spReset = document.getElementById('sp-reset').value;
+            
+            saveData();
+            updateLastUpdate();
+            alert('Pengaturan SP berhasil disimpan!');
+        }
+
+        // Save display settings
+        function saveDisplaySettings() {
+            data.settings.display.theme = document.getElementById('theme').value;
+            data.settings.display.dashboardLayout = document.getElementById('dashboard-layout').value;
+            data.settings.display.showCharts = document.getElementById('show-charts').checked;
+            data.settings.display.showRecent = document.getElementById('show-recent').checked;
+            data.settings.display.compactTables = document.getElementById('compact-tables').checked;
+            
+            saveData();
+            updateLastUpdate();
+            alert('Pengaturan tampilan berhasil disimpan!');
+            
+            // Apply theme if changed
+            applyTheme(data.settings.display.theme);
+        }
+
+        // Apply theme
+        function applyTheme(theme) {
+            // This would change CSS variables based on the selected theme
+            console.log(`Menerapkan tema: ${theme}`);
+            // In a real implementation, you would update CSS variables here
+        }
+
+        // Save all settings
+        function saveAllSettings() {
+            saveGeneralSettings();
+            saveWhatsAppSettings();
+            saveNotificationSettings();
+            saveSPSettings();
+            saveDisplaySettings();
+            alert('Semua pengaturan berhasil disimpan!');
+        }
+
+        // Change password
+        function changePassword() {
+            const currentPassword = document.getElementById('current-password').value;
+            const newPassword = document.getElementById('new-password').value;
+            const confirmPassword = document.getElementById('confirm-password').value;
+            
+            if (!currentPassword || !newPassword || !confirmPassword) {
+                alert('Harap isi semua field password!');
+                return;
+            }
+            
+            if (newPassword !== confirmPassword) {
+                alert('Password baru dan konfirmasi password tidak cocok!');
+                return;
+            }
+            
+            if (newPassword.length < 6) {
+                alert('Password baru harus minimal 6 karakter!');
+                return;
+            }
+            
+            // In a real app, you would verify the current password and update it
+            // For demo purposes, we'll just show a success message
+            alert('Password berhasil diubah!');
+            
+            // Clear password fields
+            document.getElementById('current-password').value = '';
+            document.getElementById('new-password').value = '';
+            document.getElementById('confirm-password').value = '';
+        }
+
+        // Backup data
+        function backupData() {
+            const dataStr = JSON.stringify(data, null, 2);
+            const dataBlob = new Blob([dataStr], {type: 'application/json'});
+            
+            const url = URL.createObjectURL(dataBlob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = `backup-hr-system-${new Date().toISOString().split('T')[0]}.json`;
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+            URL.revokeObjectURL(url);
+            
+            alert('Backup data berhasil!');
+        }
+
+        // Restore data
+        function restoreData() {
+            document.getElementById('restore-file').click();
+        }
+
+        // Handle file selection for restore
+        document.getElementById('restore-file').addEventListener('change', function(e) {
+            const file = e.target.files[0];
+            if (!file) return;
+            
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                try {
+                    const restoredData = JSON.parse(e.target.result);
+                    
+                    if (confirm('Apakah Anda yakin ingin memulihkan data? Data saat ini akan digantikan.')) {
+                        data = restoredData;
+                        saveData();
+                        loadSettings();
+                        alert('Data berhasil dipulihkan!');
+                    }
+                } catch (error) {
+                    alert('File tidak valid! Pastikan file adalah backup yang benar.');
+                }
+            };
+            reader.readAsText(file);
+            
+            // Reset file input
+            e.target.value = '';
+        });
+
+        // Reset system to default settings
+        function resetSystem() {
+            if (confirm('Apakah Anda yakin ingin mengembalikan pengaturan ke default? Data Anda tidak akan hilang, hanya pengaturan yang direset.')) {
+                data.settings = sampleData.settings;
+                saveData();
+                loadSettings();
+                alert('Pengaturan berhasil direset ke default!');
+            }
+        }
+
+        // Clear all data
+        function clearAllData() {
+            if (confirm('PERINGATAN: Ini akan menghapus SEMUA data termasuk anggota, jadwal, tugas, dan kehadiran. Tindakan ini tidak dapat dibatalkan. Apakah Anda yakin?')) {
+                if (confirm('SANGAT YAKIN? Semua data akan hilang permanen!')) {
+                    data.members = [];
+                    data.schedules = [];
+                    data.tasks = [];
+                    data.attendance = [];
+                    data.rewards = [];
+                    data.sps = [];
+                    saveData();
+                    loadSettings();
+                    alert('Semua data berhasil dihapus!');
+                }
+            }
+        }
+
+        // Update last update timestamp
+        function updateLastUpdate() {
+            const now = new Date();
+            const formattedDate = now.toLocaleString('id-ID');
+            localStorage.setItem('lastUpdate', formattedDate);
+            document.getElementById('last-update').textContent = formattedDate;
+        }
+
+        // Save new member
+        document.getElementById('save-member').addEventListener('click', function() {
+            const name = document.getElementById('member-name').value;
+            const nim = document.getElementById('member-nim').value;
+            const email = document.getElementById('member-email').value;
+            const phone = document.getElementById('member-phone').value;
+            const position = document.getElementById('member-position').value;
+            
+            if (!name || !nim) {
+                alert('Nama dan NIM harus diisi!');
+                return;
+            }
+            
+            const newId = data.members.length > 0 ? Math.max(...data.members.map(m => m.id)) + 1 : 1;
+            
+            data.members.push({
+                id: newId,
+                name,
+                nim,
+                email,
+                phone,
+                position,
+                status: 'Aktif',
+                points: 0
+            });
+            
+            saveData();
+            loadMembersTable();
+            
+            // Close modal
+            const modal = bootstrap.Modal.getInstance(document.getElementById('addMemberModal'));
+            modal.hide();
+            
+            // Reset form
+            document.getElementById('add-member-form').reset();
+            
+            // Show success message
+            alert('Anggota berhasil ditambahkan!');
+        });
+
+        // Save new schedule
+        document.getElementById('save-schedule').addEventListener('click', function() {
+            const title = document.getElementById('schedule-title').value;
+            const date = document.getElementById('schedule-date').value;
+            const time = document.getElementById('schedule-time').value;
+            const location = document.getElementById('schedule-location').value;
+            const description = document.getElementById('schedule-description').value;
+            
+            if (!title || !date || !time) {
+                alert('Nama kegiatan, tanggal, dan waktu harus diisi!');
+                return;
+            }
+            
+            const newId = data.schedules.length > 0 ? Math.max(...data.schedules.map(s => s.id)) + 1 : 1;
+            
+            data.schedules.push({
+                id: newId,
+                title,
+                date,
+                time,
+                location,
+                description
+            });
+            
+            saveData();
+            updateDashboard();
+            
+            // Close modal
+            const modal = bootstrap.Modal.getInstance(document.getElementById('addScheduleModal'));
+            modal.hide();
+            
+            // Reset form
+            document.getElementById('add-schedule-form').reset();
+            
+            // Show success message
+            alert('Jadwal berhasil ditambahkan!');
+        });
+
+        // Save new task
+        document.getElementById('save-task').addEventListener('click', function() {
+            const title = document.getElementById('task-title').value;
+            const description = document.getElementById('task-description').value;
+            const assigneeSelect = document.getElementById('task-assignee');
+            const deadline = document.getElementById('task-deadline').value;
+            const priority = document.getElementById('task-priority').value;
+            
+            if (!title || !deadline) {
+                alert('Nama tugas dan deadline harus diisi!');
+                return;
+            }
+            
+            const assignee = Array.from(assigneeSelect.selectedOptions).map(option => parseInt(option.value));
+            
+            if (assignee.length === 0) {
+                alert('Pilih setidaknya satu anggota untuk penugasan!');
+                return;
+            }
+            
+            const newId = data.tasks.length > 0 ? Math.max(...data.tasks.map(t => t.id)) + 1 : 1;
+            
+            data.tasks.push({
+                id: newId,
+                title,
+                description,
+                assignee,
+                deadline,
+                status: 'pending',
+                priority
+            });
+            
+            saveData();
+            loadTasksTable();
+            
+            // Close modal
+            const modal = bootstrap.Modal.getInstance(document.getElementById('addTaskModal'));
+            modal.hide();
+            
+            // Reset form
+            document.getElementById('add-task-form').reset();
+            
+            // Show success message
+            alert('Tugas berhasil ditambahkan!');
+        });
+
+        // Save new attendance
+        document.getElementById('save-attendance').addEventListener('click', function() {
+            const scheduleId = parseInt(document.getElementById('attendance-schedule').value);
+            const memberId = parseInt(document.getElementById('attendance-member').value);
+            const status = document.getElementById('attendance-status').value;
+            const notes = document.getElementById('attendance-notes').value;
+            
+            if (!scheduleId || !memberId) {
+                alert('Kegiatan dan anggota harus dipilih!');
+                return;
+            }
+            
+            // Check if attendance record already exists
+            const existingRecord = data.attendance.find(a => 
+                a.scheduleId === scheduleId && a.memberId === memberId
+            );
+            
+            if (existingRecord) {
+                alert('Kehadiran untuk anggota ini pada kegiatan tersebut sudah dicatat!');
+                return;
+            }
+            
+            const newId = data.attendance.length > 0 ? Math.max(...data.attendance.map(a => a.id)) + 1 : 1;
+            
+            data.attendance.push({
+                id: newId,
+                scheduleId,
+                memberId,
+                status,
+                notes
+            });
+            
+            saveData();
+            loadAttendanceTable();
+            updateDashboard();
+            
+            // Close modal
+            const modal = bootstrap.Modal.getInstance(document.getElementById('addAttendanceModal'));
+            modal.hide();
+            
+            // Reset form
+            document.getElementById('add-attendance-form').reset();
+            
+            // Show success message
+            alert('Kehadiran berhasil dicatat!');
+        });
+
+        // Save new reward
+        document.getElementById('save-reward').addEventListener('click', function() {
+            const memberId = parseInt(document.getElementById('reward-member').value);
+            const type = document.getElementById('reward-type').value;
+            const points = type === 'poin' ? parseInt(document.getElementById('reward-points').value) : 0;
+            const description = document.getElementById('reward-description').value;
+            
+            if (!memberId || !description) {
+                alert('Anggota dan deskripsi harus diisi!');
+                return;
+            }
+            
+            const newId = data.rewards.length > 0 ? Math.max(...data.rewards.map(r => r.id)) + 1 : 1;
+            
+            data.rewards.push({
+                id: newId,
+                memberId,
+                type,
+                points,
+                description,
+                date: new Date().toISOString().split('T')[0]
+            });
+            
+            // Update member points if reward type is points
+            if (type === 'poin') {
+                const member = data.members.find(m => m.id === memberId);
+                if (member) {
+                    member.points += points;
+                }
+            }
+            
+            saveData();
+            loadRewardsAndSP();
+            loadMembersTable();
+            updateDashboard();
+            
+            // Close modal
+            const modal = bootstrap.Modal.getInstance(document.getElementById('addRewardModal'));
+            modal.hide();
+            
+            // Reset form
+            document.getElementById('add-reward-form').reset();
+            
+            // Show success message
+            alert('Reward berhasil diberikan!');
+        });
+
+        // Save new SP
+        document.getElementById('save-sp').addEventListener('click', function() {
+            const memberId = parseInt(document.getElementById('sp-member').value);
+            const level = parseInt(document.getElementById('sp-level').value);
+            const reason = document.getElementById('sp-reason').value;
+            const description = document.getElementById('sp-description').value;
+            
+            if (!memberId || !description) {
+                alert('Anggota dan deskripsi harus diisi!');
+                return;
+            }
+            
+            const newId = data.sps.length > 0 ? Math.max(...data.sps.map(sp => sp.id)) + 1 : 1;
+            
+            data.sps.push({
+                id: newId,
+                memberId,
+                level,
+                reason,
+                description,
+                date: new Date().toISOString().split('T')[0]
+            });
+            
+            saveData();
+            loadRewardsAndSP();
+            updateDashboard();
+            
+            // Close modal
+            const modal = bootstrap.Modal.getInstance(document.getElementById('addSPModal'));
+            modal.hide();
+            
+            // Reset form
+            document.getElementById('add-sp-form').reset();
+            
+            // Show success message
+            alert('Surat Peringatan berhasil diberikan!');
+        });
+
+        // Toggle reward points field based on reward type
+        document.getElementById('reward-type').addEventListener('change', function() {
+            const pointsContainer = document.getElementById('reward-points-container');
+            if (this.value === 'poin') {
+                pointsContainer.style.display = 'block';
+            } else {
+                pointsContainer.style.display = 'none';
+            }
+        });
+
+        // Placeholder functions for edit and delete operations
+        function editMember(id) {
+            alert(`Edit anggota dengan ID: ${id} - Fitur dalam pengembangan`);
+        }
+
+        function deleteMember(id) {
+            if (confirm('Apakah Anda yakin ingin menghapus anggota ini?')) {
+                data.members = data.members.filter(m => m.id !== id);
+                saveData();
+                loadMembersTable();
+                updateDashboard();
+                alert('Anggota berhasil dihapus!');
+            }
+        }
+
+        function editTask(id) {
+            alert(`Edit tugas dengan ID: ${id} - Fitur dalam pengembangan`);
+        }
+
+        function completeTask(id) {
+            const task = data.tasks.find(t => t.id === id);
+            if (task) {
+                task.status = 'completed';
+                saveData();
+                loadTasksTable();
+                updateDashboard();
+                alert('Tugas telah ditandai sebagai selesai!');
+            }
+        }
+
+        function deleteTask(id) {
+            if (confirm('Apakah Anda yakin ingin menghapus tugas ini?')) {
+                data.tasks = data.tasks.filter(t => t.id !== id);
+                saveData();
+                loadTasksTable();
+                updateDashboard();
+                alert('Tugas berhasil dihapus!');
+            }
+        }
+
+        function editAttendance(id) {
+            alert(`Edit kehadiran dengan ID: ${id} - Fitur dalam pengembangan`);
+        }
+
+        function deleteAttendance(id) {
+            if (confirm('Apakah Anda yakin ingin menghapus catatan kehadiran ini?')) {
+                data.attendance = data.attendance.filter(a => a.id !== id);
+                saveData();
+                loadAttendanceTable();
+                updateDashboard();
+                alert('Catatan kehadiran berhasil dihapus!');
+            }
+        }
+
+      
+        function initApp() {
+            // Load data
+            updateDashboard();
+            loadMembersTable();
+            loadTasksTable();
+            loadAttendanceTable();
+            loadRewardsAndSP();
+            loadCalendar();
+            
+          
+            populateMemberSelects();
+        }
+
+        document.addEventListener('DOMContentLoaded', initApp);
+    </script>
+</body>
+</html>
