@@ -1,0 +1,1634 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard Anggota - Mini HR System</title>
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary: #3498db;
+            --secondary: #2c3e50;
+            --success: #2ecc71;
+            --warning: #f39c12;
+            --danger: #e74c3c;
+            --light: #f8f9fa;
+            --dark: #343a40;
+        }
+        
+        body {
+            font-family: 'Poppins', sans-serif;
+            background-color: #f5f7fa;
+            color: #333;
+        }
+        
+        .sidebar {
+            background-color: var(--secondary);
+            color: white;
+            min-height: 100vh;
+            padding: 0;
+            transition: all 0.3s;
+        }
+        
+        .sidebar .nav-link {
+            color: rgba(255, 255, 255, 0.8);
+            padding: 12px 20px;
+            margin: 2px 0;
+            border-radius: 0;
+        }
+        
+        .sidebar .nav-link:hover, .sidebar .nav-link.active {
+            background-color: rgba(255, 255, 255, 0.1);
+            color: white;
+        }
+        
+        .sidebar .nav-link i {
+            margin-right: 10px;
+            width: 20px;
+            text-align: center;
+        }
+        
+        .main-content {
+            padding: 20px;
+        }
+        
+        .card {
+            border-radius: 10px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            border: none;
+            margin-bottom: 20px;
+            transition: transform 0.3s;
+        }
+        
+        .card:hover {
+            transform: translateY(-5px);
+        }
+        
+        .card-header {
+            background-color: white;
+            border-bottom: 1px solid #eee;
+            font-weight: 600;
+            padding: 15px 20px;
+            border-radius: 10px 10px 0 0 !important;
+        }
+        
+        .stat-card {
+            text-align: center;
+            padding: 20px;
+        }
+        
+        .stat-card i {
+            font-size: 2.5rem;
+            margin-bottom: 15px;
+        }
+        
+        .stat-card .number {
+            font-size: 2rem;
+            font-weight: 700;
+        }
+        
+        .stat-card .label {
+            font-size: 0.9rem;
+            color: #6c757d;
+        }
+        
+        .bg-primary { background-color: var(--primary) !important; }
+        .bg-secondary { background-color: var(--secondary) !important; }
+        .bg-success { background-color: var(--success) !important; }
+        .bg-warning { background-color: var(--warning) !important; }
+        .bg-danger { background-color: var(--danger) !important; }
+        
+        .btn-primary { background-color: var(--primary); border-color: var(--primary); }
+        .btn-secondary { background-color: var(--secondary); border-color: var(--secondary); }
+        .btn-success { background-color: var(--success); border-color: var(--success); }
+        .btn-warning { background-color: var(--warning); border-color: var(--warning); }
+        .btn-danger { background-color: var(--danger); border-color: var(--danger); }
+        
+        .table th {
+            background-color: #f8f9fa;
+            font-weight: 600;
+        }
+        
+        .badge {
+            font-weight: 500;
+            padding: 6px 10px;
+        }
+        
+        .navbar-brand {
+            font-weight: 700;
+        }
+        
+        .progress {
+            height: 8px;
+        }
+        
+        .attendance-status {
+            display: inline-block;
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+            margin-right: 5px;
+        }
+        
+        .attendance-present { background-color: var(--success); }
+        .attendance-late { background-color: var(--warning); }
+        .attendance-absent { background-color: var(--danger); }
+        
+        .section {
+            display: none;
+        }
+        
+        .section.active {
+            display: block;
+        }
+        
+        .user-avatar {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background-color: var(--primary);
+            color: white;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 600;
+        }
+        
+        .task-priority-high { border-left: 4px solid var(--danger); }
+        .task-priority-medium { border-left: 4px solid var(--warning); }
+        .task-priority-low { border-left: 4px solid var(--success); }
+        
+        .member-profile-card {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border-radius: 15px;
+        }
+        
+        .progress-bar-custom {
+            border-radius: 10px;
+        }
+        
+        .quick-action {
+            text-align: center;
+            padding: 15px;
+            border-radius: 10px;
+            background-color: white;
+            transition: all 0.3s;
+            cursor: pointer;
+        }
+        
+        .quick-action:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 20px rgba(0,0,0,0.1);
+        }
+        
+        .quick-action i {
+            font-size: 2rem;
+            margin-bottom: 10px;
+            color: var(--primary);
+        }
+        
+        .activity-item {
+            padding: 10px 0;
+            border-bottom: 1px solid #eee;
+        }
+        
+        .activity-item:last-child {
+            border-bottom: none;
+        }
+        
+        @media (max-width: 768px) {
+            .sidebar {
+                min-height: auto;
+                width: 100%;
+            }
+            
+            .main-content {
+                padding: 10px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container-fluid">
+        <div class="row">
+            <!-- Sidebar -->
+            <div class="col-md-3 col-lg-2 sidebar d-md-block">
+                <div class="position-sticky pt-3">
+                    <div class="text-center p-3">
+                        <h4 class="fw-bold">Mini HR System</h4>
+                        <p class="text-muted small">Dashboard Anggota</p>
+                    </div>
+                    <ul class="nav flex-column">
+                        <li class="nav-item">
+                            <a class="nav-link active" href="#" data-section="member-dashboard">
+                                <i class="fas fa-tachometer-alt"></i> Dashboard
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="#" data-section="member-profile">
+                                <i class="fas fa-user"></i> Profil Saya
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="#" data-section="member-schedule">
+                                <i class="fas fa-calendar-alt"></i> Jadwal Saya
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="#" data-section="member-tasks">
+                                <i class="fas fa-tasks"></i> Tugas Saya
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="#" data-section="member-attendance">
+                                <i class="fas fa-clipboard-check"></i> Kehadiran Saya
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="#" data-section="member-rewards">
+                                <i class="fas fa-award"></i> Reward & SP Saya
+                            </a>
+                        </li>
+                        <li class="nav-item mt-4">
+                            <a class="nav-link" href="#" data-section="member-settings">
+                                <i class="fas fa-cog"></i> Pengaturan
+                            </a>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+
+            <!-- Main Content -->
+            <div class="col-md-9 col-lg-10 ms-sm-auto px-0">
+                <!-- Navbar -->
+                <nav class="navbar navbar-expand-lg navbar-light bg-white shadow-sm">
+                    <div class="container-fluid">
+                        <button class="navbar-toggler d-md-none" type="button" data-bs-toggle="collapse" data-bs-target="#sidebarMenu">
+                            <span class="navbar-toggler-icon"></span>
+                        </button>
+                        
+                        <div class="d-flex align-items-center">
+                            <div class="dropdown">
+                                <a href="#" class="d-flex align-items-center text-decoration-none dropdown-toggle" id="dropdownUser" data-bs-toggle="dropdown">
+                                    <div class="user-avatar me-2" id="user-avatar">RA</div>
+                                    <span class="d-none d-sm-inline" id="user-name">Rama Agung</span>
+                                </a>
+                                <ul class="dropdown-menu">
+                                    <li><a class="dropdown-item" href="#" data-section="member-profile">Profil Saya</a></li>
+                                    <li><a class="dropdown-item" href="#" data-section="member-settings">Pengaturan</a></li>
+                                    <li><hr class="dropdown-divider"></li>
+                                    <li><a class="dropdown-item" href="#">Keluar</a></li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                </nav>
+
+                <!-- Member Dashboard Section -->
+                <div class="section active main-content" id="member-dashboard">
+                    <div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
+                        <h1 class="h2">Dashboard Anggota</h1>
+                        <div class="btn-toolbar mb-2 mb-md-0">
+                            <div class="btn-group me-2">
+                                <button class="btn btn-sm btn-outline-secondary">
+                                    <i class="fas fa-sync-alt"></i> Refresh
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Profile Card -->
+                    <div class="row mb-4">
+                        <div class="col-lg-12">
+                            <div class="card member-profile-card">
+                                <div class="card-body">
+                                    <div class="row align-items-center">
+                                        <div class="col-md-8">
+                                            <h3 class="card-title" id="member-fullname">Rama Agung Supriyadi</h3>
+                                            <p class="card-text" id="member-position">Ketua Organisasi</p>
+                                            <div class="row mt-4">
+                                                <div class="col-sm-4">
+                                                    <h5 id="member-points">85</h5>
+                                                    <p class="mb-0">Total Poin</p>
+                                                </div>
+                                                <div class="col-sm-4">
+                                                    <h5 id="member-attendance-rate">92%</h5>
+                                                    <p class="mb-0">Kehadiran</p>
+                                                </div>
+                                                <div class="col-sm-4">
+                                                    <h5 id="member-tasks-completed">12</h5>
+                                                    <p class="mb-0">Tugas Selesai</p>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="col-md-4 text-center">
+                                            <div class="user-avatar mx-auto" style="width: 100px; height: 100px; font-size: 2rem;" id="member-avatar">
+                                                RA
+                                            </div>
+                                            <p class="mt-2 mb-0" id="member-nim">NIM: 25051214179</p>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Quick Actions -->
+                    <div class="row mb-4">
+                        <div class="col-lg-12">
+                            <h4 class="mb-3">Aksi Cepat</h4>
+                            <div class="row">
+                                <div class="col-md-3 mb-3">
+                                    <div class="quick-action" data-section="member-tasks">
+                                        <i class="fas fa-tasks"></i>
+                                        <h6>Tugas Saya</h6>
+                                        <p class="small text-muted">Lihat dan kelola tugas</p>
+                                    </div>
+                                </div>
+                                <div class="col-md-3 mb-3">
+                                    <div class="quick-action" data-section="member-schedule">
+                                        <i class="fas fa-calendar-check"></i>
+                                        <h6>Jadwal</h6>
+                                        <p class="small text-muted">Lihat jadwal kegiatan</p>
+                                    </div>
+                                </div>
+                                <div class="col-md-3 mb-3">
+                                    <div class="quick-action" data-section="member-attendance">
+                                        <i class="fas fa-user-check"></i>
+                                        <h6>Kehadiran</h6>
+                                        <p class="small text-muted">Riwayat kehadiran</p>
+                                    </div>
+                                </div>
+                                <div class="col-md-3 mb-3">
+                                    <div class="quick-action" data-section="member-profile">
+                                        <i class="fas fa-id-card"></i>
+                                        <h6>Profil</h6>
+                                        <p class="small text-muted">Edit profil saya</p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="row">
+                        <!-- Jadwal Mendatang -->
+                        <div class="col-lg-6 mb-4">
+                            <div class="card">
+                                <div class="card-header d-flex justify-content-between align-items-center">
+                                    <span>Jadwal Mendatang</span>
+                                    <a href="#" class="btn btn-sm btn-outline-primary" data-section="member-schedule">
+                                        Lihat Semua
+                                    </a>
+                                </div>
+                                <div class="card-body">
+                                    <div class="list-group list-group-flush" id="member-upcoming-schedule">
+                                        <!-- Schedule items will be added here dynamically -->
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Tugas Terbaru -->
+                        <div class="col-lg-6 mb-4">
+                            <div class="card">
+                                <div class="card-header d-flex justify-content-between align-items-center">
+                                    <span>Tugas Terbaru</span>
+                                    <a href="#" class="btn btn-sm btn-outline-primary" data-section="member-tasks">
+                                        Lihat Semua
+                                    </a>
+                                </div>
+                                <div class="card-body">
+                                    <div class="list-group list-group-flush" id="member-recent-tasks">
+                                        <!-- Task items will be added here dynamically -->
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="row">
+                        <!-- Statistik Kehadiran -->
+                        <div class="col-lg-8 mb-4">
+                            <div class="card">
+                                <div class="card-header">
+                                    <span>Statistik Kehadiran Saya</span>
+                                </div>
+                                <div class="card-body">
+                                    <canvas id="memberAttendanceChart" height="100"></canvas>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Aktivitas Terbaru -->
+                        <div class="col-lg-4 mb-4">
+                            <div class="card">
+                                <div class="card-header">
+                                    <span>Aktivitas Terbaru</span>
+                                </div>
+                                <div class="card-body">
+                                    <div id="member-recent-activities">
+                                        <!-- Activity items will be added here dynamically -->
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Member Profile Section -->
+                <div class="section main-content" id="member-profile">
+                    <div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
+                        <h1 class="h2">Profil Saya</h1>
+                        <div class="btn-toolbar mb-2 mb-md-0">
+                            <button class="btn btn-sm btn-primary" data-bs-toggle="modal" data-bs-target="#editProfileModal">
+                                <i class="fas fa-edit"></i> Edit Profil
+                            </button>
+                        </div>
+                    </div>
+
+                    <div class="row">
+                        <div class="col-lg-4 mb-4">
+                            <div class="card text-center">
+                                <div class="card-body">
+                                    <div class="user-avatar mx-auto mb-3" style="width: 120px; height: 120px; font-size: 2.5rem;" id="profile-avatar">
+                                        RA
+                                    </div>
+                                    <h4 id="profile-name">Rama Agung Supriyadi</h4>
+                                    <p class="text-muted" id="profile-position">Ketua Organisasi</p>
+                                    <div class="d-grid gap-2">
+                                        <button class="btn btn-outline-primary" data-bs-toggle="modal" data-bs-target="#changeAvatarModal">
+                                            <i class="fas fa-camera"></i> Ganti Foto
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="card mt-4">
+                                <div class="card-header">
+                                    <span>Statistik Saya</span>
+                                </div>
+                                <div class="card-body">
+                                    <div class="mb-3">
+                                        <div class="d-flex justify-content-between">
+                                            <span>Poin</span>
+                                            <strong id="profile-points">85</strong>
+                                        </div>
+                                        <div class="progress mt-1">
+                                            <div class="progress-bar bg-success progress-bar-custom" role="progressbar" style="width: 85%"></div>
+                                        </div>
+                                    </div>
+                                    <div class="mb-3">
+                                        <div class="d-flex justify-content-between">
+                                            <span>Kehadiran</span>
+                                            <strong id="profile-attendance">92%</strong>
+                                        </div>
+                                        <div class="progress mt-1">
+                                            <div class="progress-bar bg-primary progress-bar-custom" role="progressbar" style="width: 92%"></div>
+                                        </div>
+                                    </div>
+                                    <div class="mb-3">
+                                        <div class="d-flex justify-content-between">
+                                            <span>Tugas Selesai</span>
+                                            <strong id="profile-tasks-completed">12/15</strong>
+                                        </div>
+                                        <div class="progress mt-1">
+                                            <div class="progress-bar bg-info progress-bar-custom" role="progressbar" style="width: 80%"></div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="col-lg-8 mb-4">
+                            <div class="card">
+                                <div class="card-header">
+                                    <span>Informasi Pribadi</span>
+                                </div>
+                                <div class="card-body">
+                                    <div class="row">
+                                        <div class="col-md-6">
+                                            <div class="mb-3">
+                                                <label class="form-label">Nama Lengkap</label>
+                                                <p class="form-control-static" id="info-name">Rama Agung Supriyadi</p>
+                                            </div>
+                                            <div class="mb-3">
+                                                <label class="form-label">NIM</label>
+                                                <p class="form-control-static" id="info-nim">25051214179</p>
+                                            </div>
+                                            <div class="mb-3">
+                                                <label class="form-label">Email</label>
+                                                <p class="form-control-static" id="info-email">rama@example.com</p>
+                                            </div>
+                                        </div>
+                                        <div class="col-md-6">
+                                            <div class="mb-3">
+                                                <label class="form-label">Nomor Telepon</label>
+                                                <p class="form-control-static" id="info-phone">08123456789</p>
+                                            </div>
+                                            <div class="mb-3">
+                                                <label class="form-label">Posisi</label>
+                                                <p class="form-control-static" id="info-position">Ketua</p>
+                                            </div>
+                                            <div class="mb-3">
+                                                <label class="form-label">Status</label>
+                                                <p class="form-control-static"><span class="badge bg-success" id="info-status">Aktif</span></p>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="mb-3">
+                                        <label class="form-label">Alamat</label>
+                                        <p class="form-control-static" id="info-address">Jl. Contoh No. 123, Surabaya</p>
+                                    </div>
+                                    <div class="mb-3">
+                                        <label class="form-label">Bio</label>
+                                        <p class="form-control-static" id="info-bio">Saya adalah ketua organisasi yang bertanggung jawab atas koordinasi seluruh kegiatan.</p>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="card mt-4">
+                                <div class="card-header">
+                                    <span>Pencapaian & Sertifikat</span>
+                                </div>
+                                <div class="card-body">
+                                    <div id="profile-achievements">
+                                        <!-- Achievements will be added here dynamically -->
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Member Schedule Section -->
+                <div class="section main-content" id="member-schedule">
+                    <div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
+                        <h1 class="h2">Jadwal Saya</h1>
+                        <div class="btn-toolbar mb-2 mb-md-0">
+                            <div class="btn-group me-2">
+                                <button class="btn btn-sm btn-outline-secondary">
+                                    <i class="fas fa-calendar"></i> Kalender
+                                </button>
+                                <button class="btn btn-sm btn-outline-secondary">
+                                    <i class="fas fa-list"></i> Daftar
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="card">
+                        <div class="card-body">
+                            <div id="member-calendar">
+                                <!-- Calendar content will be populated here -->
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Member Tasks Section -->
+                <div class="section main-content" id="member-tasks">
+                    <div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
+                        <h1 class="h2">Tugas Saya</h1>
+                        <div class="btn-toolbar mb-2 mb-md-0">
+                            <div class="btn-group me-2">
+                                <button class="btn btn-sm btn-outline-primary">
+                                    <i class="fas fa-filter"></i> Filter
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="card">
+                        <div class="card-body">
+                            <div class="table-responsive">
+                                <table class="table table-hover" id="member-tasks-table">
+                                    <thead>
+                                        <tr>
+                                            <th>#</th>
+                                            <th>Nama Tugas</th>
+                                            <th>Deskripsi</th>
+                                            <th>Deadline</th>
+                                            <th>Status</th>
+                                            <th>Prioritas</th>
+                                            <th>Aksi</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <!-- Tasks data will be populated here -->
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Member Attendance Section -->
+                <div class="section main-content" id="member-attendance">
+                    <div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
+                        <h1 class="h2">Kehadiran Saya</h1>
+                        <div class="btn-toolbar mb-2 mb-md-0">
+                            <button class="btn btn-sm btn-outline-secondary">
+                                <i class="fas fa-download"></i> Ekspor
+                            </button>
+                        </div>
+                    </div>
+
+                    <div class="row mb-4">
+                        <div class="col-md-3">
+                            <div class="card bg-primary text-white">
+                                <div class="card-body text-center">
+                                    <h3 id="attendance-present">0</h3>
+                                    <p class="mb-0">Hadir</p>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-3">
+                            <div class="card bg-warning text-white">
+                                <div class="card-body text-center">
+                                    <h3 id="attendance-late">0</h3>
+                                    <p class="mb-0">Terlambat</p>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-3">
+                            <div class="card bg-danger text-white">
+                                <div class="card-body text-center">
+                                    <h3 id="attendance-absent">0</h3>
+                                    <p class="mb-0">Tidak Hadir</p>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-3">
+                            <div class="card bg-success text-white">
+                                <div class="card-body text-center">
+                                    <h3 id="attendance-rate-percent">0%</h3>
+                                    <p class="mb-0">Persentase</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="card">
+                        <div class="card-body">
+                            <div class="table-responsive">
+                                <table class="table table-hover" id="member-attendance-table">
+                                    <thead>
+                                        <tr>
+                                            <th>#</th>
+                                            <th>Tanggal</th>
+                                            <th>Kegiatan</th>
+                                            <th>Status</th>
+                                            <th>Keterangan</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <!-- Attendance data will be populated here -->
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Member Rewards Section -->
+                <div class="section main-content" id="member-rewards">
+                    <div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
+                        <h1 class="h2">Reward & SP Saya</h1>
+                    </div>
+
+                    <div class="row">
+                        <div class="col-lg-6 mb-4">
+                            <div class="card">
+                                <div class="card-header bg-success text-white">
+                                    <span>Reward Saya</span>
+                                </div>
+                                <div class="card-body">
+                                    <div class="list-group list-group-flush" id="member-rewards-list">
+                                        <!-- Rewards will be added here dynamically -->
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="col-lg-6 mb-4">
+                            <div class="card">
+                                <div class="card-header bg-warning text-white">
+                                    <span>Surat Peringatan (SP) Saya</span>
+                                </div>
+                                <div class="card-body">
+                                    <div class="list-group list-group-flush" id="member-sp-list">
+                                        <!-- SPs will be added here dynamically -->
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Member Settings Section -->
+                <div class="section main-content" id="member-settings">
+                    <div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
+                        <h1 class="h2">Pengaturan Saya</h1>
+                    </div>
+
+                    <div class="row">
+                        <div class="col-lg-6 mb-4">
+                            <div class="card">
+                                <div class="card-header">
+                                    <span>Pengaturan Akun</span>
+                                </div>
+                                <div class="card-body">
+                                    <div class="mb-3">
+                                        <label for="member-notifications" class="form-label">Notifikasi</label>
+                                        <div class="form-check">
+                                            <input class="form-check-input" type="checkbox" id="notif-email" checked>
+                                            <label class="form-check-label" for="notif-email">
+                                                Email Notifikasi
+                                            </label>
+                                        </div>
+                                        <div class="form-check">
+                                            <input class="form-check-input" type="checkbox" id="notif-whatsapp" checked>
+                                            <label class="form-check-label" for="notif-whatsapp">
+                                                WhatsApp Notifikasi
+                                            </label>
+                                        </div>
+                                    </div>
+                                    <div class="mb-3">
+                                        <label for="member-language" class="form-label">Bahasa</label>
+                                        <select class="form-select" id="member-language">
+                                            <option value="id">Bahasa Indonesia</option>
+                                            <option value="en">English</option>
+                                        </select>
+                                    </div>
+                                    <button class="btn btn-primary" onclick="saveMemberSettings()">
+                                        <i class="fas fa-save"></i> Simpan Pengaturan
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="col-lg-6 mb-4">
+                            <div class="card">
+                                <div class="card-header">
+                                    <span>Ubah Password</span>
+                                </div>
+                                <div class="card-body">
+                                    <div class="mb-3">
+                                        <label for="current-password-member" class="form-label">Password Saat Ini</label>
+                                        <input type="password" class="form-control" id="current-password-member">
+                                    </div>
+                                    <div class="mb-3">
+                                        <label for="new-password-member" class="form-label">Password Baru</label>
+                                        <input type="password" class="form-control" id="new-password-member">
+                                    </div>
+                                    <div class="mb-3">
+                                        <label for="confirm-password-member" class="form-label">Konfirmasi Password Baru</label>
+                                        <input type="password" class="form-control" id="confirm-password-member">
+                                    </div>
+                                    <button class="btn btn-warning" onclick="changeMemberPassword()">
+                                        <i class="fas fa-key"></i> Ubah Password
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modals for Member -->
+    <!-- Edit Profile Modal -->
+    <div class="modal fade" id="editProfileModal" tabindex="-1" aria-labelledby="editProfileModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="editProfileModalLabel">Edit Profil</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <form id="edit-profile-form">
+                        <div class="mb-3">
+                            <label for="edit-name" class="form-label">Nama Lengkap</label>
+                            <input type="text" class="form-control" id="edit-name">
+                        </div>
+                        <div class="mb-3">
+                            <label for="edit-email" class="form-label">Email</label>
+                            <input type="email" class="form-control" id="edit-email">
+                        </div>
+                        <div class="mb-3">
+                            <label for="edit-phone" class="form-label">Nomor Telepon</label>
+                            <input type="text" class="form-control" id="edit-phone">
+                        </div>
+                        <div class="mb-3">
+                            <label for="edit-address" class="form-label">Alamat</label>
+                            <textarea class="form-control" id="edit-address" rows="3"></textarea>
+                        </div>
+                        <div class="mb-3">
+                            <label for="edit-bio" class="form-label">Bio</label>
+                            <textarea class="form-control" id="edit-bio" rows="3"></textarea>
+                        </div>
+                    </form>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Batal</button>
+                    <button type="button" class="btn btn-primary" id="save-profile">Simpan</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Change Avatar Modal -->
+    <div class="modal fade" id="changeAvatarModal" tabindex="-1" aria-labelledby="changeAvatarModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-sm">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="changeAvatarModalLabel">Ganti Foto Profil</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body text-center">
+                    <div class="user-avatar mx-auto mb-3" style="width: 120px; height: 120px; font-size: 2.5rem;" id="avatar-preview">
+                        RA
+                    </div>
+                    <div class="mb-3">
+                        <input type="file" class="form-control" id="avatar-upload" accept="image/*">
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">Atau pilih inisial:</label>
+                        <input type="text" class="form-control text-center" id="avatar-initials" maxlength="2" value="RA">
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Batal</button>
+                    <button type="button" class="btn btn-primary" id="save-avatar">Simpan</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Bootstrap JS -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
+    <!-- Chart.js -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    
+    <script>
+        // Sample data for the member
+        const memberData = {
+            id: 1,
+            name: "Rama Agung Supriyadi",
+            nim: "25051214179",
+            email: "rama@example.com",
+            phone: "08123456789",
+            position: "Ketua",
+            status: "Aktif",
+            points: 85,
+            address: "Jl. Contoh No. 123, Surabaya",
+            bio: "Saya adalah ketua organisasi yang bertanggung jawab atas koordinasi seluruh kegiatan.",
+            avatar: "RA",
+            settings: {
+                notifications: {
+                    email: true,
+                    whatsapp: true
+                },
+                language: "id"
+            }
+        };
+
+        // Sample data for member's activities
+        const memberActivities = {
+            schedules: [
+                { id: 1, title: "Rapat Paripurna", date: "2025-11-01", time: "19:00", location: "Aula FT", description: "Rapat pembahasan program kerja semester" },
+                { id: 2, title: "Pelatihan Kepemimpinan", date: "2025-11-05", time: "14:00", location: "Ruang Seminar", description: "Pelatihan untuk pengurus inti" },
+                { id: 3, title: "Monitoring Program Kerja", date: "2025-11-10", time: "16:00", location: "Online", description: "Evaluasi progress program kerja" }
+            ],
+            tasks: [
+                { id: 1, title: "Membuat Proposal Acara", description: "Proposal acara tahunan organisasi", deadline: "2025-11-05T23:59", status: "pending", priority: "high" },
+                { id: 2, title: "Laporan Keuangan", description: "Laporan keuangan bulan Oktober", deadline: "2025-11-03T23:59", status: "completed", priority: "medium" },
+                { id: 3, title: "Persiapan Materi Pelatihan", description: "Mempersiapkan materi untuk pelatihan kepemimpinan", deadline: "2025-11-04T12:00", status: "pending", priority: "medium" }
+            ],
+            attendance: [
+                { id: 1, scheduleId: 1, scheduleTitle: "Rapat Paripurna", date: "2025-10-25", status: "present", notes: "" },
+                { id: 2, scheduleId: 2, scheduleTitle: "Pelatihan Kepemimpinan", date: "2025-10-20", status: "late", notes: "Terlambat 10 menit" },
+                { id: 3, scheduleId: 3, scheduleTitle: "Monitoring Program Kerja", date: "2025-10-15", status: "present", notes: "" },
+                { id: 4, scheduleId: 4, scheduleTitle: "Rapat Koordinasi", date: "2025-10-10", status: "absent", notes: "Sakit" },
+                { id: 5, scheduleId: 5, scheduleTitle: "Seminar Kewirausahaan", date: "2025-10-05", status: "present", notes: "" }
+            ],
+            rewards: [
+                { id: 1, type: "poin", points: 10, description: "Menyelesaikan tugas tepat waktu", date: "2025-10-25" },
+                { id: 2, type: "sertifikat", points: 0, description: "Ketua terbaik bulan Oktober", date: "2025-10-30" }
+            ],
+            sps: [
+                { id: 1, level: 1, reason: "terlambat", description: "Terlambat menghadiri kegiatan 3 kali", date: "2025-10-22" }
+            ],
+            achievements: [
+                { id: 1, title: "Anggota Terbaik", description: "Penghargaan anggota terbaik bulan September", date: "2025-09-30", type: "sertifikat" },
+                { id: 2, title: "Volunteer Award", description: "Penghargaan untuk kontribusi dalam acara sosial", date: "2025-08-15", type: "sertifikat" }
+            ],
+            recentActivities: [
+                { id: 1, type: "task", description: "Menyelesaikan tugas 'Laporan Keuangan'", date: "2025-10-28 14:30" },
+                { id: 2, type: "attendance", description: "Hadir dalam 'Rapat Paripurna'", date: "2025-10-25 19:00" },
+                { id: 3, type: "reward", description: "Mendapatkan reward poin", date: "2025-10-25 10:15" },
+                { id: 4, type: "task", description: "Menerima tugas baru 'Membuat Proposal Acara'", date: "2025-10-24 09:45" }
+            ]
+        };
+
+        // Initialize member data from localStorage or use sample data
+        let member = JSON.parse(localStorage.getItem('memberData')) || memberData;
+        let activities = JSON.parse(localStorage.getItem('memberActivities')) || memberActivities;
+
+        // Save member data to localStorage
+        function saveMemberData() {
+            localStorage.setItem('memberData', JSON.stringify(member));
+            localStorage.setItem('memberActivities', JSON.stringify(activities));
+        }
+
+        // Navigation
+        document.querySelectorAll('.sidebar .nav-link').forEach(link => {
+            link.addEventListener('click', function(e) {
+                e.preventDefault();
+                
+                // Remove active class from all links and sections
+                document.querySelectorAll('.sidebar .nav-link').forEach(item => {
+                    item.classList.remove('active');
+                });
+                document.querySelectorAll('.section').forEach(section => {
+                    section.classList.remove('active');
+                });
+                
+                // Add active class to clicked link and corresponding section
+                this.classList.add('active');
+                const sectionId = this.getAttribute('data-section');
+                document.getElementById(sectionId).classList.add('active');
+                
+                // Refresh the section data
+                refreshMemberSection(sectionId);
+            });
+        });
+
+        // Quick actions navigation
+        document.querySelectorAll('.quick-action').forEach(action => {
+            action.addEventListener('click', function() {
+                const sectionId = this.getAttribute('data-section');
+                
+                // Remove active class from all links and sections
+                document.querySelectorAll('.sidebar .nav-link').forEach(item => {
+                    item.classList.remove('active');
+                });
+                document.querySelectorAll('.section').forEach(section => {
+                    section.classList.remove('active');
+                });
+                
+                // Add active class to corresponding link and section
+                document.querySelector(`.sidebar .nav-link[data-section="${sectionId}"]`).classList.add('active');
+                document.getElementById(sectionId).classList.add('active');
+                
+                // Refresh the section data
+                refreshMemberSection(sectionId);
+            });
+        });
+
+        // Refresh section data
+        function refreshMemberSection(sectionId) {
+            switch(sectionId) {
+                case 'member-dashboard':
+                    loadMemberDashboard();
+                    break;
+                case 'member-profile':
+                    loadMemberProfile();
+                    break;
+                case 'member-schedule':
+                    loadMemberSchedule();
+                    break;
+                case 'member-tasks':
+                    loadMemberTasks();
+                    break;
+                case 'member-attendance':
+                    loadMemberAttendance();
+                    break;
+                case 'member-rewards':
+                    loadMemberRewards();
+                    break;
+                case 'member-settings':
+                    loadMemberSettings();
+                    break;
+            }
+        }
+
+        // Load member dashboard
+        function loadMemberDashboard() {
+            // Update profile card
+            document.getElementById('member-fullname').textContent = member.name;
+            document.getElementById('member-position').textContent = member.position;
+            document.getElementById('member-points').textContent = member.points;
+            document.getElementById('member-nim').textContent = `NIM: ${member.nim}`;
+            document.getElementById('member-avatar').textContent = member.avatar;
+            document.getElementById('user-avatar').textContent = member.avatar;
+            document.getElementById('user-name').textContent = member.name.split(' ')[0]; // First name only
+            
+            // Calculate attendance rate
+            const totalAttendance = activities.attendance.length;
+            const presentAttendance = activities.attendance.filter(a => a.status === 'present').length;
+            const attendanceRate = totalAttendance > 0 ? Math.round((presentAttendance / totalAttendance) * 100) : 0;
+            document.getElementById('member-attendance-rate').textContent = `${attendanceRate}%`;
+            
+            // Count completed tasks
+            const completedTasks = activities.tasks.filter(t => t.status === 'completed').length;
+            document.getElementById('member-tasks-completed').textContent = completedTasks;
+            
+            // Load upcoming schedule
+            const upcomingSchedule = document.getElementById('member-upcoming-schedule');
+            upcomingSchedule.innerHTML = '';
+            
+            const today = new Date();
+            const upcomingEvents = activities.schedules.filter(s => new Date(s.date) >= today)
+                .sort((a, b) => new Date(a.date) - new Date(b.date))
+                .slice(0, 3);
+                
+            if (upcomingEvents.length === 0) {
+                upcomingSchedule.innerHTML = '<p class="text-muted text-center">Tidak ada jadwal mendatang</p>';
+            } else {
+                upcomingEvents.forEach(event => {
+                    const eventDate = new Date(event.date);
+                    const formattedDate = eventDate.toLocaleDateString('id-ID', { 
+                        weekday: 'short', 
+                        year: 'numeric', 
+                        month: 'short', 
+                        day: 'numeric' 
+                    });
+                    
+                    const eventItem = document.createElement('div');
+                    eventItem.className = 'list-group-item d-flex justify-content-between align-items-center';
+                    eventItem.innerHTML = `
+                        <div>
+                            <h6 class="mb-1">${event.title}</h6>
+                            <small class="text-muted">${formattedDate} | ${event.time} | ${event.location}</small>
+                        </div>
+                        <span class="badge bg-primary rounded-pill">${event.time}</span>
+                    `;
+                    upcomingSchedule.appendChild(eventItem);
+                });
+            }
+            
+            // Load recent tasks
+            const recentTasks = document.getElementById('member-recent-tasks');
+            recentTasks.innerHTML = '';
+            
+            const sortedTasks = [...activities.tasks].sort((a, b) => new Date(a.deadline) - new Date(b.deadline)).slice(0, 3);
+            
+            if (sortedTasks.length === 0) {
+                recentTasks.innerHTML = '<p class="text-muted text-center">Tidak ada tugas</p>';
+            } else {
+                sortedTasks.forEach(task => {
+                    const taskDeadline = new Date(task.deadline);
+                    const formattedDeadline = taskDeadline.toLocaleDateString('id-ID', { 
+                        year: 'numeric', 
+                        month: 'short', 
+                        day: 'numeric'
+                    });
+                    
+                    const priorityClass = `task-priority-${task.priority}`;
+                    const statusBadge = task.status === 'completed' ? 
+                        '<span class="badge bg-success">Selesai</span>' : 
+                        '<span class="badge bg-warning">Pending</span>';
+                    
+                    const taskItem = document.createElement('div');
+                    taskItem.className = `list-group-item ${priorityClass}`;
+                    taskItem.innerHTML = `
+                        <div class="d-flex w-100 justify-content-between">
+                            <h6 class="mb-1">${task.title}</h6>
+                            ${statusBadge}
+                        </div>
+                        <p class="mb-1">${task.description}</p>
+                        <small class="text-muted">Deadline: ${formattedDeadline}</small>
+                    `;
+                    recentTasks.appendChild(taskItem);
+                });
+            }
+            
+            // Load attendance chart
+            loadMemberAttendanceChart();
+            
+            // Load recent activities
+            loadRecentActivities();
+        }
+
+        // Load member attendance chart
+        function loadMemberAttendanceChart() {
+            const ctx = document.getElementById('memberAttendanceChart').getContext('2d');
+            
+            // Count attendance by status
+            const presentCount = activities.attendance.filter(a => a.status === 'present').length;
+            const lateCount = activities.attendance.filter(a => a.status === 'late').length;
+            const absentCount = activities.attendance.filter(a => a.status === 'absent').length;
+            
+            new Chart(ctx, {
+                type: 'doughnut',
+                data: {
+                    labels: ['Hadir', 'Terlambat', 'Tidak Hadir'],
+                    datasets: [{
+                        data: [presentCount, lateCount, absentCount],
+                        backgroundColor: [
+                            '#2ecc71',
+                            '#f39c12',
+                            '#e74c3c'
+                        ],
+                        borderWidth: 2,
+                        borderColor: '#fff'
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    plugins: {
+                        legend: {
+                            position: 'bottom',
+                        },
+                        title: {
+                            display: true,
+                            text: 'Distribusi Kehadiran'
+                        }
+                    }
+                }
+            });
+        }
+
+        // Load recent activities
+        function loadRecentActivities() {
+            const activitiesContainer = document.getElementById('member-recent-activities');
+            activitiesContainer.innerHTML = '';
+            
+            if (activities.recentActivities.length === 0) {
+                activitiesContainer.innerHTML = '<p class="text-muted text-center">Tidak ada aktivitas terbaru</p>';
+            } else {
+                activities.recentActivities.forEach(activity => {
+                    const activityDate = new Date(activity.date);
+                    const formattedDate = activityDate.toLocaleDateString('id-ID', { 
+                        day: 'numeric',
+                        month: 'short',
+                        hour: '2-digit',
+                        minute: '2-digit'
+                    });
+                    
+                    let icon = '';
+                    let color = '';
+                    
+                    switch(activity.type) {
+                        case 'task':
+                            icon = 'fas fa-tasks';
+                            color = 'primary';
+                            break;
+                        case 'attendance':
+                            icon = 'fas fa-user-check';
+                            color = 'success';
+                            break;
+                        case 'reward':
+                            icon = 'fas fa-award';
+                            color = 'warning';
+                            break;
+                        default:
+                            icon = 'fas fa-bell';
+                            color = 'info';
+                    }
+                    
+                    const activityItem = document.createElement('div');
+                    activityItem.className = 'activity-item';
+                    activityItem.innerHTML = `
+                        <div class="d-flex">
+                            <div class="flex-shrink-0">
+                                <i class="${icon} text-${color}"></i>
+                            </div>
+                            <div class="flex-grow-1 ms-3">
+                                <p class="mb-1">${activity.description}</p>
+                                <small class="text-muted">${formattedDate}</small>
+                            </div>
+                        </div>
+                    `;
+                    activitiesContainer.appendChild(activityItem);
+                });
+            }
+        }
+
+        // Load member profile
+        function loadMemberProfile() {
+            // Update profile information
+            document.getElementById('profile-name').textContent = member.name;
+            document.getElementById('profile-position').textContent = member.position;
+            document.getElementById('profile-avatar').textContent = member.avatar;
+            document.getElementById('profile-points').textContent = member.points;
+            
+            // Calculate attendance rate
+            const totalAttendance = activities.attendance.length;
+            const presentAttendance = activities.attendance.filter(a => a.status === 'present').length;
+            const attendanceRate = totalAttendance > 0 ? Math.round((presentAttendance / totalAttendance) * 100) : 0;
+            document.getElementById('profile-attendance').textContent = `${attendanceRate}%`;
+            
+            // Count completed tasks
+            const completedTasks = activities.tasks.filter(t => t.status === 'completed').length;
+            const totalTasks = activities.tasks.length;
+            document.getElementById('profile-tasks-completed').textContent = `${completedTasks}/${totalTasks}`;
+            
+            // Update profile info
+            document.getElementById('info-name').textContent = member.name;
+            document.getElementById('info-nim').textContent = member.nim;
+            document.getElementById('info-email').textContent = member.email;
+            document.getElementById('info-phone').textContent = member.phone;
+            document.getElementById('info-position').textContent = member.position;
+            document.getElementById('info-status').textContent = member.status;
+            document.getElementById('info-address').textContent = member.address;
+            document.getElementById('info-bio').textContent = member.bio;
+            
+            // Load achievements
+            loadAchievements();
+        }
+
+        // Load achievements
+        function loadAchievements() {
+            const achievementsContainer = document.getElementById('profile-achievements');
+            achievementsContainer.innerHTML = '';
+            
+            if (activities.achievements.length === 0) {
+                achievementsContainer.innerHTML = '<p class="text-muted text-center">Belum ada pencapaian</p>';
+            } else {
+                activities.achievements.forEach(achievement => {
+                    const achievementDate = new Date(achievement.date);
+                    const formattedDate = achievementDate.toLocaleDateString('id-ID', { 
+                        year: 'numeric', 
+                        month: 'long', 
+                        day: 'numeric'
+                    });
+                    
+                    const achievementItem = document.createElement('div');
+                    achievementItem.className = 'card mb-3';
+                    achievementItem.innerHTML = `
+                        <div class="card-body">
+                            <div class="d-flex justify-content-between align-items-center">
+                                <div>
+                                    <h5 class="card-title">${achievement.title}</h5>
+                                    <p class="card-text">${achievement.description}</p>
+                                    <p class="card-text"><small class="text-muted">Diperoleh pada ${formattedDate}</small></p>
+                                </div>
+                                <div>
+                                    <span class="badge bg-success">${achievement.type}</span>
+                                </div>
+                            </div>
+                        </div>
+                    `;
+                    achievementsContainer.appendChild(achievementItem);
+                });
+            }
+        }
+
+        // Load member schedule
+        function loadMemberSchedule() {
+            const calendarEl = document.getElementById('member-calendar');
+            if (!calendarEl) return;
+            
+            // Simple calendar implementation
+            calendarEl.innerHTML = `
+                <div class="text-center mb-3">
+                    <h4>Jadwal Kegiatan Saya</h4>
+                </div>
+                <div class="list-group">
+                    ${activities.schedules.map(schedule => {
+                        const scheduleDate = new Date(schedule.date);
+                        const formattedDate = scheduleDate.toLocaleDateString('id-ID', { 
+                            weekday: 'long',
+                            year: 'numeric', 
+                            month: 'long', 
+                            day: 'numeric'
+                        });
+                        
+                        // Check if user attended this schedule
+                        const attendance = activities.attendance.find(a => a.scheduleId === schedule.id);
+                        let statusBadge = '';
+                        if (attendance) {
+                            if (attendance.status === 'present') {
+                                statusBadge = '<span class="badge bg-success">Hadir</span>';
+                            } else if (attendance.status === 'late') {
+                                statusBadge = '<span class="badge bg-warning">Terlambat</span>';
+                            } else if (attendance.status === 'absent') {
+                                statusBadge = '<span class="badge bg-danger">Tidak Hadir</span>';
+                            }
+                        }
+                        
+                        return `
+                            <div class="list-group-item">
+                                <div class="d-flex w-100 justify-content-between">
+                                    <h5 class="mb-1">${schedule.title}</h5>
+                                    <div>
+                                        <small>${schedule.time}</small>
+                                        ${statusBadge}
+                                    </div>
+                                </div>
+                                <p class="mb-1">${schedule.description}</p>
+                                <small class="text-muted">${formattedDate} | ${schedule.location}</small>
+                            </div>
+                        `;
+                    }).join('')}
+                </div>
+            `;
+        }
+
+        // Load member tasks
+        function loadMemberTasks() {
+            const tableBody = document.querySelector('#member-tasks-table tbody');
+            tableBody.innerHTML = '';
+            
+            activities.tasks.forEach(task => {
+                const statusBadge = task.status === 'completed' ? 
+                    '<span class="badge bg-success">Selesai</span>' : 
+                    '<span class="badge bg-warning">Pending</span>';
+                
+                const priorityBadge = task.priority === 'high' ? 
+                    '<span class="badge bg-danger">Tinggi</span>' : 
+                    task.priority === 'medium' ? 
+                    '<span class="badge bg-warning">Sedang</span>' : 
+                    '<span class="badge bg-success">Rendah</span>';
+                
+                const deadline = new Date(task.deadline);
+                const formattedDeadline = deadline.toLocaleDateString('id-ID', { 
+                    year: 'numeric', 
+                    month: 'short', 
+                    day: 'numeric',
+                    hour: '2-digit',
+                    minute: '2-digit'
+                });
+                
+                const actionButton = task.status === 'completed' ? 
+                    `<button class="btn btn-sm btn-outline-secondary" disabled>
+                        <i class="fas fa-check"></i> Selesai
+                    </button>` :
+                    `<button class="btn btn-sm btn-outline-success" onclick="completeTask(${task.id})">
+                        <i class="fas fa-check"></i> Tandai Selesai
+                    </button>`;
+                
+                const row = document.createElement('tr');
+                row.innerHTML = `
+                    <td>${task.id}</td>
+                    <td>${task.title}</td>
+                    <td>${task.description}</td>
+                    <td>${formattedDeadline}</td>
+                    <td>${statusBadge}</td>
+                    <td>${priorityBadge}</td>
+                    <td>${actionButton}</td>
+                `;
+                tableBody.appendChild(row);
+            });
+        }
+
+        // Complete task
+        function completeTask(taskId) {
+            const task = activities.tasks.find(t => t.id === taskId);
+            if (task) {
+                task.status = 'completed';
+                saveMemberData();
+                loadMemberTasks();
+                loadMemberDashboard(); // Refresh dashboard stats
+                alert('Tugas telah ditandai sebagai selesai!');
+            }
+        }
+
+        // Load member attendance
+        function loadMemberAttendance() {
+            // Update attendance stats
+            const presentCount = activities.attendance.filter(a => a.status === 'present').length;
+            const lateCount = activities.attendance.filter(a => a.status === 'late').length;
+            const absentCount = activities.attendance.filter(a => a.status === 'absent').length;
+            const totalAttendance = activities.attendance.length;
+            const attendanceRate = totalAttendance > 0 ? Math.round((presentCount / totalAttendance) * 100) : 0;
+            
+            document.getElementById('attendance-present').textContent = presentCount;
+            document.getElementById('attendance-late').textContent = lateCount;
+            document.getElementById('attendance-absent').textContent = absentCount;
+            document.getElementById('attendance-rate-percent').textContent = `${attendanceRate}%`;
+            
+            // Load attendance table
+            const tableBody = document.querySelector('#member-attendance-table tbody');
+            tableBody.innerHTML = '';
+            
+            activities.attendance.forEach(record => {
+                const statusBadge = record.status === 'present' ? 
+                    '<span class="badge bg-success">Hadir</span>' : 
+                    record.status === 'late' ? 
+                    '<span class="badge bg-warning">Terlambat</span>' : 
+                    '<span class="badge bg-danger">Tidak Hadir</span>';
+                
+                const recordDate = new Date(record.date);
+                const formattedDate = recordDate.toLocaleDateString('id-ID', { 
+                    year: 'numeric', 
+                    month: 'short', 
+                    day: 'numeric'
+                });
+                
+                const row = document.createElement('tr');
+                row.innerHTML = `
+                    <td>${record.id}</td>
+                    <td>${formattedDate}</td>
+                    <td>${record.scheduleTitle}</td>
+                    <td>${statusBadge}</td>
+                    <td>${record.notes || '-'}</td>
+                `;
+                tableBody.appendChild(row);
+            });
+        }
+
+        // Load member rewards
+        function loadMemberRewards() {
+            const rewardsList = document.getElementById('member-rewards-list');
+            const spList = document.getElementById('member-sp-list');
+            
+            rewardsList.innerHTML = '';
+            spList.innerHTML = '';
+            
+            // Load rewards
+            if (activities.rewards.length === 0) {
+                rewardsList.innerHTML = '<p class="text-muted text-center">Belum ada reward</p>';
+            } else {
+                activities.rewards.forEach(reward => {
+                    const rewardDate = new Date(reward.date);
+                    const formattedDate = rewardDate.toLocaleDateString('id-ID', { 
+                        year: 'numeric', 
+                        month: 'short', 
+                        day: 'numeric'
+                    });
+                    
+                    const rewardItem = document.createElement('div');
+                    rewardItem.className = 'list-group-item';
+                    rewardItem.innerHTML = `
+                        <div class="d-flex w-100 justify-content-between">
+                            <h6 class="mb-1">${reward.type === 'poin' ? `+${reward.points} Poin` : reward.type}</h6>
+                            <small>${formattedDate}</small>
+                        </div>
+                        <p class="mb-1">${reward.description}</p>
+                    `;
+                    rewardsList.appendChild(rewardItem);
+                });
+            }
+            
+            // Load SPs
+            if (activities.sps.length === 0) {
+                spList.innerHTML = '<p class="text-muted text-center">Belum ada SP</p>';
+            } else {
+                activities.sps.forEach(sp => {
+                    const spDate = new Date(sp.date);
+                    const formattedDate = spDate.toLocaleDateString('id-ID', { 
+                        year: 'numeric', 
+                        month: 'short', 
+                        day: 'numeric'
+                    });
+                    
+                    const spLevelBadge = sp.level === 1 ? 
+                        '<span class="badge bg-warning">SP 1</span>' : 
+                        sp.level === 2 ? 
+                        '<span class="badge bg-danger">SP 2</span>' : 
+                        '<span class="badge bg-dark">SP 3</span>';
+                    
+                    const spItem = document.createElement('div');
+                    spItem.className = 'list-group-item';
+                    spItem.innerHTML = `
+                        <div class="d-flex w-100 justify-content-between">
+                            <h6 class="mb-1">Surat Peringatan</h6>
+                            <small>${formattedDate}</small>
+                        </div>
+                        <p class="mb-1">${sp.description}</p>
+                        <div class="d-flex justify-content-between align-items-center">
+                            <small class="text-muted">${getSPReasonText(sp.reason)}</small>
+                            ${spLevelBadge}
+                        </div>
+                    `;
+                    spList.appendChild(spItem);
+                });
+            }
+        }
+
+        // Get SP reason text
+        function getSPReasonText(reason) {
+            switch(reason) {
+                case 'terlambat': return 'Terlambat';
+                case 'tidak_hadir': return 'Tidak Hadir';
+                case 'tugas_terlambat': return 'Tugas Terlambat';
+                case 'pelanggaran_lain': return 'Pelanggaran Lain';
+                default: return reason;
+            }
+        }
+
+        // Load member settings
+        function loadMemberSettings() {
+            // Load notification settings
+            document.getElementById('notif-email').checked = member.settings.notifications.email;
+            document.getElementById('notif-whatsapp').checked = member.settings.notifications.whatsapp;
+            
+            // Load language settings
+            document.getElementById('member-language').value = member.settings.language;
+        }
+
+        // Save member settings
+        function saveMemberSettings() {
+            member.settings.notifications.email = document.getElementById('notif-email').checked;
+            member.settings.notifications.whatsapp = document.getElementById('notif-whatsapp').checked;
+            member.settings.language = document.getElementById('member-language').value;
+            
+            saveMemberData();
+            alert('Pengaturan berhasil disimpan!');
+        }
+
+        // Change member password
+        function changeMemberPassword() {
+            const currentPassword = document.getElementById('current-password-member').value;
+            const newPassword = document.getElementById('new-password-member').value;
+            const confirmPassword = document.getElementById('confirm-password-member').value;
+            
+            if (!currentPassword || !newPassword || !confirmPassword) {
+                alert('Harap isi semua field password!');
+                return;
+            }
+            
+            if (newPassword !== confirmPassword) {
+                alert('Password baru dan konfirmasi password tidak cocok!');
+                return;
+            }
+            
+            if (newPassword.length < 6) {
+                alert('Password baru harus minimal 6 karakter!');
+                return;
+            }
+            
+            // In a real app, you would verify the current password and update it
+            // For demo purposes, we'll just show a success message
+            alert('Password berhasil diubah!');
+            
+            // Clear password fields
+            document.getElementById('current-password-member').value = '';
+            document.getElementById('new-password-member').value = '';
+            document.getElementById('confirm-password-member').value = '';
+        }
+
+        // Edit profile modal
+        document.getElementById('save-profile').addEventListener('click', function() {
+            member.name = document.getElementById('edit-name').value;
+            member.email = document.getElementById('edit-email').value;
+            member.phone = document.getElementById('edit-phone').value;
+            member.address = document.getElementById('edit-address').value;
+            member.bio = document.getElementById('edit-bio').value;
+            
+            saveMemberData();
+            loadMemberDashboard();
+            loadMemberProfile();
+            
+            // Close modal
+            const modal = bootstrap.Modal.getInstance(document.getElementById('editProfileModal'));
+            modal.hide();
+            
+            alert('Profil berhasil diperbarui!');
+        });
+
+        // Change avatar modal
+        document.getElementById('save-avatar').addEventListener('click', function() {
+            const initials = document.getElementById('avatar-initials').value;
+            if (initials && initials.length === 2) {
+                member.avatar = initials.toUpperCase();
+                saveMemberData();
+                loadMemberDashboard();
+                loadMemberProfile();
+                
+                // Close modal
+                const modal = bootstrap.Modal.getInstance(document.getElementById('changeAvatarModal'));
+                modal.hide();
+                
+                alert('Foto profil berhasil diubah!');
+            } else {
+                alert('Masukkan 2 inisial untuk foto profil!');
+            }
+        });
+
+        // Populate edit profile modal
+        document.getElementById('editProfileModal').addEventListener('show.bs.modal', function() {
+            document.getElementById('edit-name').value = member.name;
+            document.getElementById('edit-email').value = member.email;
+            document.getElementById('edit-phone').value = member.phone;
+            document.getElementById('edit-address').value = member.address;
+            document.getElementById('edit-bio').value = member.bio;
+        });
+
+        // Populate change avatar modal
+        document.getElementById('changeAvatarModal').addEventListener('show.bs.modal', function() {
+            document.getElementById('avatar-preview').textContent = member.avatar;
+            document.getElementById('avatar-initials').value = member.avatar;
+        });
+
+        // Initialize the application
+        function initApp() {
+            // Load initial data
+            loadMemberDashboard();
+        }
+
+        // Initialize the app when the page loads
+        document.addEventListener('DOMContentLoaded', initApp);
+    </script>
+</body>
+</html>
